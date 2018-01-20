@@ -1,6 +1,6 @@
-<?php 
+<?php
 include("database.php");
-$var = $database->prepare("SELECT * FROM sensor Where activo = 1 LIMIT 3 ");
+$var = $database->prepare("SELECT * FROM sensor Where activo = 1 LIMIT 3 and Cliente_Rut = '".$_SESSION['RUT']."'");
 $var->execute();
 // value 4  limite inferior
 // value 5 limite superior
@@ -44,4 +44,3 @@ foreach ($sensores as $key => $value) {
 }
 
 ?>
-

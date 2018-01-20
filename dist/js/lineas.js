@@ -4,7 +4,7 @@ $(document).ready(function() {
 	var ctx = $("#line-chartcanvas");
 
 	$.ajax({
-		url : "http://localhost:82/itecsoft/adminLTE/activos.php",
+		url : "http://localhost:80/Itecsoft_2018/activos.php",
 		type : "GET",
 		success : function(data){
 			console.log(data);
@@ -19,22 +19,22 @@ $(document).ready(function() {
 			var dias=0;
 
 			for (var i = 0; i < len; i++) {
-				if (data[i].nombre == "Presion") {
-					sensor.Temperatura.push(data[i].magnitud);
-					
+				if (data[i].Nombre == "Presion") {
+					sensor.Temperatura.push(data[i].Magnitud);
+
 				}
-				else if (data[i].nombre == "Humedad") {
-					sensor.Presion.push(data[i].magnitud);
-					
+				else if (data[i].Nombre == "Humedad") {
+					sensor.Presion.push(data[i].Magnitud);
+
 				}
-				else if(data[i].nombre == "Temperatura"){
-					sensor.Humedad.push(data[i].magnitud);
-					dias=dias+1;	
+				else if(data[i].Nombre == "Temperatura"){
+					sensor.Humedad.push(data[i].Magnitud);
+					dias=dias+1;
 				}
 
 			}
-			
-			
+
+
 			var fechas = [];
 			for (var i =1; i <= dias; i++) {
 					var txt = " Dia ";
@@ -96,5 +96,5 @@ $(document).ready(function() {
 		options : options
 	} );
 }
-});	
+});
 });

@@ -58,7 +58,7 @@ if(!isset($_SESSION['MAIL'])){
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-                
+
               </div>
             </div>
             <!-- /.modal-content -->
@@ -87,11 +87,11 @@ if(!isset($_SESSION['MAIL'])){
         <ul class="nav navbar-nav">
           <!-- Messages: style can be found in dropdown.less-->
           <li class="dropdown messages-menu">
-            
+
             <ul class="dropdown-menu">
-              
-              
-               
+
+
+
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
                   <li><!-- start message -->
@@ -161,7 +161,7 @@ if(!isset($_SESSION['MAIL'])){
             </ul>
           </li>
           <!-- Notifications: style can be found in dropdown.less -->
-          <?php               
+          <?php
               $alertas = $database->prepare("Select count(*) from Alerta where Cliente_Rut = '".$_SESSION['RUT']."' and Visto = 0");
               $alertas->execute();
               $cant = $alertas->fetchall();
@@ -169,7 +169,7 @@ if(!isset($_SESSION['MAIL'])){
               $alertas = $database->prepare("Select Descripcion,Visto  from Alerta where Cliente_Rut = '".$_SESSION['RUT']."'");
               $alertas->execute();
               $cant = $alertas->fetchall();
-                         
+
          ?>
 
 
@@ -179,8 +179,8 @@ if(!isset($_SESSION['MAIL'])){
               <i class="fa fa-bell-o"></i>
               <span class="label label-warning"><?php echo $cantidad ?></span>
             </a>
-            <script>  
-              function cambiar(v){                
+            <script>
+              function cambiar(v){
                 document.getElementById('texto').innerHTML = v;
               }
                 </script>
@@ -189,28 +189,28 @@ if(!isset($_SESSION['MAIL'])){
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
-                  
-                  <?php 
+
+                  <?php
 
                     foreach ($cant as $key => $value) {
                       # code...
                       if($value[1]==0){
                         ?>
-                       <li>                                
-                              <a data-toggle='modal' data-target='#modal-danger' <?php echo   "onclick = 'cambiar(".$key.")'" ?> >    
+                       <li>
+                              <a data-toggle='modal' data-target='#modal-danger' <?php echo   "onclick = 'cambiar(".$key.")'" ?> >
 
                               <?php    echo $value[0];?>
                                   </a>
 
                               </li>"
-                              
-                              <?php   
+
+                              <?php
                       }
                     }
 
                     ?>
-                    
-                  
+
+
                 </ul>
               </li>
               <li class="footer"><a href="alertas.php">Verlas Todas</a></li>
@@ -222,7 +222,7 @@ if(!isset($_SESSION['MAIL'])){
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs"><?php                
+              <span class="hidden-xs"><?php
                 echo $_SESSION['NAME'];
                 ?></span>
             </a>
@@ -232,7 +232,7 @@ if(!isset($_SESSION['MAIL'])){
                 <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
 
                 <p>
-                  <?php                
+                  <?php
                 echo $_SESSION['NAME'];
                 ?>
                   <small>Administrador</small>
@@ -241,11 +241,11 @@ if(!isset($_SESSION['MAIL'])){
               <!-- Menu Body -->
               <li class="user-body">
                 <div class="row">
-                  
+
                   <div class="col-xs-4 text-center">
                     <a href="#">Contenido</a>
                   </div>
-                  
+
                   <div class="col-xs-4 text-center">
                     <a href="#">Opciones</a>
                   </div>
@@ -281,13 +281,13 @@ if(!isset($_SESSION['MAIL'])){
           <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
-          <p><?php                
+          <p><?php
                 echo $_SESSION['NAME'];
                 ?></p>
           <a href="#"> Administrador itecsoft</a>
         </div>
       </div>
-     
+
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MENÚ PRINCIPAL</li>
@@ -298,22 +298,22 @@ if(!isset($_SESSION['MAIL'])){
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
-          <ul class="treeview-menu">            
+          <ul class="treeview-menu">
             <li><a href="index.php"><i class="fa fa-circle-o"></i> Portada </a></li>
           </ul>
         </li>
         <li>
           <a href="mostrarmapa.php">
-            <i class="fa fa-map-o"></i> <span>Mapa</span>                        
+            <i class="fa fa-map-o"></i> <span>Mapa</span>
           </a>
-          
+
         </li>
         <li class="treeview">
           <a href="#">
             <i class="fa fa-gears"></i>
             <span>Opciones</span>
             <span class="pull-right-container">
-              no disponible aun  
+              no disponible aun
             </span>
           </a>
           <ul class="treeview-menu">
@@ -339,12 +339,12 @@ if(!isset($_SESSION['MAIL'])){
             </span>
           </a>
         </li>
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
       </ul>
     </section>
     <!-- /.sidebar -->
@@ -365,8 +365,8 @@ if(!isset($_SESSION['MAIL'])){
     </section>
 
 
-     
-        
+
+
 
 
         <section>
@@ -377,63 +377,63 @@ if(!isset($_SESSION['MAIL'])){
             </div>
             <div class="box-body">
               <!-- Minimal style -->
-				<?php $var = $database->prepare("SELECT * FROM sensor Where activo = 1 LIMIT 3 ");
+				<?php $var = $database->prepare("SELECT * FROM Sensor Where Activo = 1 LIMIT 3 and Cliente_Rut = '".$_SESSION['RUT']."'");
 					$var->execute();
 					// value 4  limite inferior
 					// value 5 limite superior
 					$sensores = $var->fetchall();
 					?>
-					  
+
               <!-- checkbox -->
               <form action="cfg.php" method="post">
-              <?php 
+              <?php
               	foreach ($sensores as $key => $value) {
-              		 if($value[1]== "Temperatura"){
+              		 if($value[0]== "Temperatura"){
               		 	?>
 							<input type="text" value="" class="slider form-control" data-slider-min="-200" data-slider-max="200"
-                         data-slider-step="1" data-slider-value="[<?php echo $value[4] ?>,<?php echo $value[5] ?>]" data-slider-orientation="horizontal"
+                         data-slider-step="1" data-slider-value="[<?php echo $value[3] ?>,<?php echo $value[4] ?>]" data-slider-orientation="horizontal"
                          data-slider-selection="before" data-slider-tooltip="show" data-slider-id="red" id="price-min" name="temperatura">
 
                   		<p>Temperatura</p>
-              		 	<?php 
+              		 	<?php
               		 }
-              		 if($value[1]== "Humedad"){
+              		 if($value[0]== "Humedad"){
               		 	?>
 							<input type="text" value="" class="slider form-control" data-slider-min="-200" data-slider-max="200"
-                         data-slider-step="1" data-slider-value="[<?php echo $value[4] ?>,<?php echo $value[5] ?>]" data-slider-orientation="horizontal"
+                         data-slider-step="1" data-slider-value="[<?php echo $value[3] ?>,<?php echo $value[4] ?>]" data-slider-orientation="horizontal"
                          data-slider-selection="before" data-slider-tooltip="show" data-slider-id="blue" id="price-min" name="humedad">
 
                   		<p>Humedad</p>
-              		 	<?php 
+              		 	<?php
               		 }
-              		 if($value[1]== "Presion"){
+              		 if($value[0]== "Presion"){
               		 	?>
 							<input type="text" value="" class="slider form-control" data-slider-min="-200" data-slider-max="200"
-                         data-slider-step="1" data-slider-value="[<?php echo $value[4] ?>,<?php echo $value[5] ?>]" data-slider-orientation="horizontal"
+                         data-slider-step="1" data-slider-value="[<?php echo $value[3] ?>,<?php echo $value[4] ?>]" data-slider-orientation="horizontal"
                          data-slider-selection="before" data-slider-tooltip="show" data-slider-id="red" id="price-min" name="presion">
 
                   		<p>Presión</p>
-              		 	<?php 
+              		 	<?php
               		 }
-              		 if($value[1]== "Presion2"){
+              		 if($value[0]== "Presion2"){
               		 	?>
 							<input type="text" value="" class="slider form-control" data-slider-min="-200" data-slider-max="200"
-                         data-slider-step="1" data-slider-value="[<?php echo $value[4] ?>,<?php echo $value[5] ?>]" data-slider-orientation="horizontal"
+                         data-slider-step="1" data-slider-value="[<?php echo $value[3] ?>,<?php echo $value[4] ?>]" data-slider-orientation="horizontal"
                          data-slider-selection="before" data-slider-tooltip="show" data-slider-id="blue" id="price-min" name="presion2">
 
                   		<p>Presion 2</p>
-              		 	<?php 
+              		 	<?php
               		 }
-              		 if($value[1]== "Otro"){
+              		 if($value[0]== "Otro"){
               		 	?>
 							<input type="text" value="" class="slider form-control" data-slider-min="-200" data-slider-max="200"
                          data-slider-step="1" data-slider-value="[<?php echo $value[4] ?>,<?php echo $value[5] ?>]" data-slider-orientation="horizontal"
                          data-slider-selection="before" data-slider-tooltip="show" data-slider-id="red" id="price-min" name="otro">
 
                   		<p>Otro</p>
-              		 	<?php 
+              		 	<?php
               		 }
-              		 
+
               	}
                ?>
                 <input type="submit" value="Guardar">
@@ -443,7 +443,7 @@ if(!isset($_SESSION['MAIL'])){
 
               <!-- Minimal red style -->
             <!-- /.box-body -->
-            
+
           </div>
           <!-- /.box -->
         </div>
@@ -663,7 +663,7 @@ if(!isset($_SESSION['MAIL'])){
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 
 
-  
+
 <!-- Bootstrap 3.3.7 -->
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- Morris.js charts -->

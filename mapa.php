@@ -3,7 +3,7 @@ if(!isset($_SESSION['MAIL'])){
   header("Location :pages/examples/login.html");
   exit;
 }
-  
+
  ?>
 <!DOCTYPE html>
 <html>
@@ -65,7 +65,7 @@ if(!isset($_SESSION['MAIL'])){
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-                
+
               </div>
             </div>
             <!-- /.modal-content -->
@@ -94,11 +94,11 @@ if(!isset($_SESSION['MAIL'])){
         <ul class="nav navbar-nav">
           <!-- Messages: style can be found in dropdown.less-->
           <li class="dropdown messages-menu">
-            
+
             <ul class="dropdown-menu">
-              
-              
-               
+
+
+
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
                   <li><!-- start message -->
@@ -168,7 +168,7 @@ if(!isset($_SESSION['MAIL'])){
             </ul>
           </li>
           <!-- Notifications: style can be found in dropdown.less -->
-          <?php               
+          <?php
               $alertas = $database->prepare("Select count(*) from Alerta where Cliente_Rut = '".$_SESSION['RUT']."' and Visto = 0");
               $alertas->execute();
               $cant = $alertas->fetchall();
@@ -176,7 +176,7 @@ if(!isset($_SESSION['MAIL'])){
               $alertas = $database->prepare("Select Descripcion,Visto  from Alerta where Cliente_Rut = '".$_SESSION['RUT']."'");
               $alertas->execute();
               $cant = $alertas->fetchall();
-                         
+
          ?>
 
 
@@ -186,8 +186,8 @@ if(!isset($_SESSION['MAIL'])){
               <i class="fa fa-bell-o"></i>
               <span class="label label-warning"><?php echo $cantidad ?></span>
             </a>
-            <script>  
-              function cambiar(v){                
+            <script>
+              function cambiar(v){
                 document.getElementById('texto').innerHTML = v;
               }
                 </script>
@@ -196,28 +196,28 @@ if(!isset($_SESSION['MAIL'])){
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
-                  
-                  <?php 
+
+                  <?php
 
                     foreach ($cant as $key => $value) {
                       # code...
                       if($value[1]==0){
                         ?>
-                       <li>                                
-                              <a data-toggle='modal' data-target='#modal-danger' <?php echo   "onclick = 'cambiar(".$key.")'" ?> >    
+                       <li>
+                              <a data-toggle='modal' data-target='#modal-danger' <?php echo   "onclick = 'cambiar(".$key.")'" ?> >
 
                               <?php    echo $value[0];?>
                                   </a>
 
                               </li>"
-                              
-                              <?php   
+
+                              <?php
                       }
                     }
 
                     ?>
-                    
-                  
+
+
                 </ul>
               </li>
               <li class="footer"><a href="alertas.php">Verlas Todas</a></li>
@@ -229,7 +229,7 @@ if(!isset($_SESSION['MAIL'])){
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs"><?php                
+              <span class="hidden-xs"><?php
                 echo $_SESSION['NAME'];
                 ?></span>
             </a>
@@ -239,7 +239,7 @@ if(!isset($_SESSION['MAIL'])){
                 <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
 
                 <p>
-                  <?php                
+                  <?php
                 echo $_SESSION['NAME'];
                 ?>
                   <small>Administrador</small>
@@ -248,11 +248,11 @@ if(!isset($_SESSION['MAIL'])){
               <!-- Menu Body -->
               <li class="user-body">
                 <div class="row">
-                  
+
                   <div class="col-xs-4 text-center">
                     <a href="#">Contenido</a>
                   </div>
-                  
+
                   <div class="col-xs-4 text-center">
                     <a href="#">Opciones</a>
                   </div>
@@ -288,13 +288,13 @@ if(!isset($_SESSION['MAIL'])){
           <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
-          <p><?php                
+          <p><?php
                 echo $_SESSION['NAME'];
                 ?></p>
           <a href="#"> Administrador itecsoft</a>
         </div>
       </div>
-     
+
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MENÚ PRINCIPAL</li>
@@ -312,16 +312,16 @@ if(!isset($_SESSION['MAIL'])){
         </li>
         <li>
           <a href="mapa.php">
-            <i class="fa fa-map-o"></i> <span>Mapa</span>                        
+            <i class="fa fa-map-o"></i> <span>Mapa</span>
           </a>
-          
+
         </li>
         <li class="treeview">
           <a href="#">
             <i class="fa fa-gears"></i>
             <span>Opciones</span>
             <span class="pull-right-container">
-              no disponible aun  
+              no disponible aun
             </span>
           </a>
           <ul class="treeview-menu">
@@ -347,12 +347,12 @@ if(!isset($_SESSION['MAIL'])){
             </span>
           </a>
         </li>
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
       </ul>
     </section>
     <!-- /.sidebar -->
@@ -371,7 +371,7 @@ if(!isset($_SESSION['MAIL'])){
         <li class="active">Principal</li>
       </ol>
     </section>
-    
+
 <section>
   <div class="content-wrapper">
     <!-- Main content -->
@@ -380,17 +380,17 @@ if(!isset($_SESSION['MAIL'])){
               </div>
               <div id="mensaje"></div>
 
-</section>                
+</section>
 
-<?php 
-$var = $database->prepare("SELECT * FROM sensor Where activo = 1");
+<?php
+$var = $database->prepare("SELECT * FROM Sensor Where activo = 1");
 $var->execute();
 // value 4  limite inferior
 // value 5 limite superior
 $sensores = $var->fetchall();
 foreach ($sensores as $key => $value) {
   # code...
-  
+
   if($value[1] == "Temperatura"){
     echo "<p id='temperatura'> ". $value[2] ." </p> ";
   }
@@ -403,7 +403,7 @@ foreach ($sensores as $key => $value) {
 
 }
 
-       ?>  
+       ?>
 <script>
   document.getElementById("temperatura").style.visibility = "hidden";
   document.getElementById("humedad").style.visibility = "hidden";
@@ -450,38 +450,38 @@ foreach ($sensores as $key => $value) {
   function results(e){
     var latitud = e.latlng.toString().slice(7,16);
     var longitud = e.latlng.toString().slice(17,26);
-  document.getElementById('mensaje').innerHTML='<p id="latlng">Datos sobre ese sector: <br> Latitud :'+latitud+' <br>Longitud : '+longitud+'</p>';  
+  document.getElementById('mensaje').innerHTML='<p id="latlng">Datos sobre ese sector: <br> Latitud :'+latitud+' <br>Longitud : '+longitud+'</p>';
   }
 
-  function onMapClick(e) {    
+  function onMapClick(e) {
       results(e);
   }
-  
+
   mymap.on('click', onMapClick);
   mymap.on('click', results);
-  
+
 </script>
       <!-- Main row -->
       <div class="row">
         <!-- Left col -->
         <section class="col-lg-7 connectedSortable">
           <!-- Custom tabs (Charts with tabs)-->
-          
+
           <!-- /.nav-tabs-custom -->
 
           <!-- Chat box -->
-          
+
           <!-- /.box (chat box) -->
 
           <!-- TO DO List -->
-          
+
 
           <!-- quick email widget -->
-          
+
           <!-- solid sales graph -->
-          
+
           <!-- Calendar -->
-          
+
           <!-- /.box -->
 
         </section>

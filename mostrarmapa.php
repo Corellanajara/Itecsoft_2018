@@ -3,7 +3,7 @@ if(!isset($_SESSION['MAIL'])){
   header("Location :pages/examples/login.html");
   exit;
 }
-  
+
  ?>
 <!DOCTYPE html>
 <html>
@@ -65,7 +65,7 @@ if(!isset($_SESSION['MAIL'])){
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-                
+
               </div>
             </div>
             <!-- /.modal-content -->
@@ -94,11 +94,11 @@ if(!isset($_SESSION['MAIL'])){
         <ul class="nav navbar-nav">
           <!-- Messages: style can be found in dropdown.less-->
           <li class="dropdown messages-menu">
-            
+
             <ul class="dropdown-menu">
-              
-              
-               
+
+
+
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
                   <li><!-- start message -->
@@ -168,7 +168,7 @@ if(!isset($_SESSION['MAIL'])){
             </ul>
           </li>
           <!-- Notifications: style can be found in dropdown.less -->
-          <?php               
+          <?php
               $alertas = $database->prepare("Select count(*) from Alerta where Cliente_Rut = '".$_SESSION['RUT']."' and Visto = 0");
               $alertas->execute();
               $cant = $alertas->fetchall();
@@ -176,7 +176,7 @@ if(!isset($_SESSION['MAIL'])){
               $alertas = $database->prepare("Select Descripcion,Visto  from Alerta where Cliente_Rut = '".$_SESSION['RUT']."'");
               $alertas->execute();
               $cant = $alertas->fetchall();
-                         
+
          ?>
 
 
@@ -186,8 +186,8 @@ if(!isset($_SESSION['MAIL'])){
               <i class="fa fa-bell-o"></i>
               <span class="label label-warning"><?php echo $cantidad ?></span>
             </a>
-            <script>  
-              function cambiar(v){                
+            <script>
+              function cambiar(v){
                 document.getElementById('texto').innerHTML = v;
               }
                 </script>
@@ -196,28 +196,28 @@ if(!isset($_SESSION['MAIL'])){
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
-                  
-                  <?php 
+
+                  <?php
 
                     foreach ($cant as $key => $value) {
                       # code...
                       if($value[1]==0){
                         ?>
-                       <li>                                
-                              <a data-toggle='modal' data-target='#modal-danger' <?php echo   "onclick = 'cambiar(".$key.")'" ?> >    
+                       <li>
+                              <a data-toggle='modal' data-target='#modal-danger' <?php echo   "onclick = 'cambiar(".$key.")'" ?> >
 
                               <?php    echo $value[0];?>
                                   </a>
 
                               </li>"
-                              
-                              <?php   
+
+                              <?php
                       }
                     }
 
                     ?>
-                    
-                  
+
+
                 </ul>
               </li>
               <li class="footer"><a href="alertas.php">Verlas Todas</a></li>
@@ -229,7 +229,7 @@ if(!isset($_SESSION['MAIL'])){
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs"><?php                
+              <span class="hidden-xs"><?php
                 echo $_SESSION['NAME'];
                 ?></span>
             </a>
@@ -239,7 +239,7 @@ if(!isset($_SESSION['MAIL'])){
                 <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
 
                 <p>
-                  <?php                
+                  <?php
                 echo $_SESSION['NAME'];
                 ?>
                   <small>Administrador</small>
@@ -248,11 +248,11 @@ if(!isset($_SESSION['MAIL'])){
               <!-- Menu Body -->
               <li class="user-body">
                 <div class="row">
-                  
+
                   <div class="col-xs-4 text-center">
                     <a href="#">Contenido</a>
                   </div>
-                  
+
                   <div class="col-xs-4 text-center">
                     <a href="#">Opciones</a>
                   </div>
@@ -278,6 +278,7 @@ if(!isset($_SESSION['MAIL'])){
       </div>
     </nav>
   </header>
+
   <!-- Left side column. contains the logo and sidebar -->
   <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
@@ -288,13 +289,13 @@ if(!isset($_SESSION['MAIL'])){
           <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
-          <p><?php                
+          <p><?php
                 echo $_SESSION['NAME'];
                 ?></p>
           <a href="#"> Administrador itecsoft</a>
         </div>
       </div>
-     
+
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MENÚ PRINCIPAL</li>
@@ -305,22 +306,23 @@ if(!isset($_SESSION['MAIL'])){
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
-          <ul class="treeview-menu">            
+          <ul class="treeview-menu">
+
             <li><a href="index.php"><i class="fa fa-circle-o"></i> Portada </a></li>
           </ul>
         </li>
         <li>
-          <a href="mostrarmapa.php">
-            <i class="fa fa-map-o"></i> <span>Mapa</span>                        
+          <a href="mapa.php">
+            <i class="fa fa-map-o"></i> <span>Mapa</span>
           </a>
-          
+
         </li>
         <li class="treeview">
           <a href="#">
             <i class="fa fa-gears"></i>
             <span>Opciones</span>
             <span class="pull-right-container">
-              no disponible aun  
+              no disponible aun
             </span>
           </a>
           <ul class="treeview-menu">
@@ -346,19 +348,17 @@ if(!isset($_SESSION['MAIL'])){
             </span>
           </a>
         </li>
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
       </ul>
     </section>
     <!-- /.sidebar -->
   </aside>
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
@@ -370,91 +370,166 @@ if(!isset($_SESSION['MAIL'])){
         <li class="active">Principal</li>
       </ol>
     </section>
-    
+
 <section>
   <div class="content-wrapper">
     <!-- Main content -->
       <br>
-       <div id="mapid" style="width: 700px; height: 500px;">
-           
-       </div> 
 
-              <br><br>
-              </div>
-        <div >
-      
+
+<?php
+        //////////////////////////////////////////
+include("conexion.php");
+?>
+
+<div class="container">
+
+
+      <h2>Lista de Sectores</h2>
+
+      <hr />
+
+      <?php
+      if(isset($_GET['aksi']) == 'delete'){
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $nik = mysqli_real_escape_string($con,(strip_tags($_GET["nik"],ENT_QUOTES)));
+        $cek = mysqli_query($con, "SELECT * FROM sector3ptos WHERE id='$nik' and Cliente_Rut = '".$_SESSION['RUT']."'");
+        if(mysqli_num_rows($cek) == 0){
+          echo '<div class="alert alert-info alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> No se encontraron datos.</div>';
+        }else{
+          $delete = mysqli_query($con, "DELETE FROM sector3ptos WHERE id='$nik' and Cliente_Rut = '".$_SESSION['RUT']."'");
+          if($delete){
+            echo '<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> Datos eliminado correctamente.</div>';
+          }else{
+            echo '<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> Error, no se pudo eliminar los datos.</div>';
+          }
+        }
+      }
+      ?>
+
+
       <br />
-      
+      <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <tr>
+                    <th>No</th>
+
+          <th>Nombre</th>
+                    <th>Latitud</th>
+                    <th>Longitud</th>
+          <th>Latitud</th>
+                    <th>Longitud</th>
+                    <th>Latitud</th>
+                    <th>Longitud</th>
+
+        </tr>
+        <?php
+
+        $sql = mysqli_query($con, "SELECT * FROM sector3ptos ORDER BY id ASC where Cliente_Rut = '".$_SESSION['RUT']."'");
+
+        if(mysqli_num_rows($sql) == 0){
+          echo '<tr><td colspan="8">No hay datos.</td></tr>';
+        }else{
+          $no = 1;
+          while($row = mysqli_fetch_assoc($sql)){
+            echo '
+            <tr>
+              <td>'.$no.'</td>
+              <td>'.$row['nombre'].'</td>
+                            <td>'.$row['latitud1'].'</td>
+                            <td>'.$row['longitud1'].'</td>
+                            <td>'.$row['latitud2'].'</td>
+                            <td>'.$row['longitud2'].'</td>
+                            <td>'.$row['latitud3'].'</td>
+                            <td>'.$row['longitud3'].'</td>'
+              ;
+
+
+            $no++;
+          }
+        }
+        ?>
+      </table>
+    <center>
+      <div id="mapid" style="width: 700px; height: 500px;">
+
+      </div>
+    </center>
     </div>
+
+
+
+
+</section>
+
+
+<footer class="main-footer">
+  <div class="pull-right hidden-xs">
+    <b>Version</b> 0.4.0
   </div>
-
-<?php 
-        /////////////////////////////////////////
-      ?>  
-  
-</section>                
+  <strong>Copyright &copy; 2017 <b>Cristopher Orellana</b>.</strong> All rights
+  reserved.
+</footer>
 
 
 
 
 
 
-
-
-
-<?php 
-$var = $database->prepare("SELECT * from sector3ptos Where id > 0");
+<?php
+$var = $database->prepare("SELECT * from sector3ptos Where id > 0 where Cliente_Rut = '".$_SESSION['RUT']."'");
 $var->execute();
 // value 4  limite inferior
 // value 5 limite superior
 $puntos = $var->fetchall();
 $i = 0;
-echo "<p hidden id='total'> ".sizeof($puntos)."</p>";    
-foreach ($puntos as $key => $value) {  
+echo "<p hidden id='total'> ".sizeof($puntos)."</p>";
+foreach ($puntos as $key => $value) {
   # code...
 
-  if($value[1] != null){
-    echo "<p hidden id='nombre".$key."'> ".$value[1]."</p>";    
+  if($value[8] != null){
+    echo "<p hidden id='nombre".$key."'> ".$value[8]."</p>";
   }
   echo "<br>";
 
+  if($value[1]!=null){
+    echo " <p hidden id ='l1".$key."' > ".$value[1]."</p>";
+    $i = $i + 1 ;
+  }
+  echo "<br>";
   if($value[2]!=null){
-    echo " <p hidden id ='l1".$key."' > ".$value[2]."</p>";
+    echo " <p hidden id ='L1".$key."' > ".$value[2]."</p>";
     $i = $i + 1 ;
   }
   echo "<br>";
   if($value[3]!=null){
-    echo " <p hidden id ='L1".$key."' > ".$value[3]."</p>";
+    echo " <p hidden id ='l2".$key."' > ".$value[3]."</p>";
     $i = $i + 1 ;
   }
   echo "<br>";
   if($value[4]!=null){
-    echo " <p hidden id ='l2".$key."' > ".$value[4]."</p>";
+    echo " <p hidden id ='L2".$key."' > ".$value[4]."</p>";
     $i = $i + 1 ;
-  } 
+  }
   echo "<br>";
   if($value[5]!=null){
-    echo " <p hidden id ='L2".$key."' > ".$value[5]."</p>";
+    echo " <p hidden id ='l3".$key."' > ".$value[5]."</p>";
     $i = $i + 1 ;
   }
   echo "<br>";
   if($value[6]!=null){
-    echo " <p hidden id ='l3".$key."' > ".$value[6]."</p>";
-    $i = $i + 1 ;
-  }
-  echo "<br>";
-  if($value[7]!=null){
-    echo " <p hidden id ='L3".$key."' > ".$value[7]."</p>";
+    echo " <p hidden id ='L3".$key."' > ".$value[6]."</p>";
     $i = $i + 1 ;
   }
   echo "<p hidden id='cantidad".$key."' >".$i."";
 
 }
 
-       ?>  
+       ?>
+
 
 <script>
-  
+
 
   var mymap = L.map('mapid').setView([-35.4334181, -71.6317734,17], 16);
 
@@ -476,7 +551,7 @@ for (var i = 0; i < total; i++) {
   var iif = "L2"+i;
   var ig = "L3"+i;
   var iname = "nombre"+i;
-  
+
   var l1 = document.getElementById(ia).innerHTML;
   var l2 = document.getElementById(ib).innerHTML;
   var l3 = document.getElementById(ic).innerHTML;
@@ -487,61 +562,89 @@ for (var i = 0; i < total; i++) {
   var arr2 = [l2,L2];
   var arr3 = [l3,L3];
   var nombre = document.getElementById(iname).innerHTML;
-  
+
 
   L.polygon([
       arr1,arr2,arr3
   ]).addTo(mymap).bindPopup(nombre);
-    
+
 }
 
 
-  
+
+  var cantidad = 0;
+  var popup = L.popup();
 
 
+  function guardar(){
+    for (var i = Things.length - 1; i >= 0; i--) {
+      Things[i]
+    }
+    if (cantidad >= 3){
+      alert("bacan es mas de 3 asi que esta bien :"+cantidad);
+    }else{
+      alert("llego solo hasta el "+
+        cantidad);
+    }
+  }
 
-  
-  
+
+  function results(e){
+
+    var latitud = e.latlng.toString().slice(7,16);
+    var longitud = e.latlng.toString().slice(17,26);
+
+    var table = document.getElementById("tabla");
+
+    var row = table.insertRow(cantidad);
+
+    cantidad = cantidad + 1 ;
+
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+
+    cell1.innerHTML="<input type='text' name=a"+cantidad+" value="+latitud+">";
+    cell2.innerHTML="<input type='text' name=b"+cantidad+" value="+longitud+">";
+
+    document.getElementById("cantidad").value=cantidad;
+
+  }
+  var icono = L.icon({
+    iconUrl: 'hoja.png',
+    shadowUrl: '1601.png',
+
+    iconSize:     [38, 95], // size of thei con
+    shadowSize:   [50, 64], // size of the shadow
+    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+  });
+  var i  = 0;
+  function onMapClick(e) {
+
+  if(i<7){
+    i = i + 1 ;
+
+    popup
+      .setLatLng(e.latlng)
+      var latitud = e.latlng.toString().slice(7,16);
+      var longitud = e.latlng.toString().slice(17,26);
+
+      L.marker([latitud, longitud], {icon: icono}).addTo(mymap);
+
+      results(e);
+      }else{
+        alert("No pueden ser más de siete puntos!");
+      }
+
+  }
+
+  mymap.on('click', onMapClick);
+
+
 </script>
-      <!-- Main row -->
-      <div class="row">
-        <!-- Left col -->
-        <section class="col-lg-7 connectedSortable">
-          <!-- Custom tabs (Charts with tabs)-->
-          
-          <!-- /.nav-tabs-custom -->
 
-          <!-- Chat box -->
-          
-          <!-- /.box (chat box) -->
 
-          <!-- TO DO List -->
-          
-
-          <!-- quick email widget -->
-          
-          <!-- solid sales graph -->
-          
-          <!-- Calendar -->
-          
-          <!-- /.box -->
-
-        </section>
-        <!-- right col -->
-      </div>
-      <!-- /.row (main row) -->
-
-    </section>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
-  <footer class="main-footer">
-    <div class="pull-right hidden-xs">
-      <b>Version</b> 0.4.0
-    </div>
-    <strong>Copyright &copy; 2017 <b>Cristopher Orellana</b>.</strong> All rights
-    reserved.
-  </footer>
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">

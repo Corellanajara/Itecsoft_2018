@@ -3,7 +3,7 @@ if(!isset($_SESSION['MAIL'])){
   header("Location: login.html");
   exit;
 }
-  error_reporting(0);
+  //error_reporting(0);
  ?>
 <!DOCTYPE html>
 <html>
@@ -62,7 +62,7 @@ if(!isset($_SESSION['MAIL'])){
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-                
+
               </div>
             </div>
             <!-- /.modal-content -->
@@ -91,11 +91,11 @@ if(!isset($_SESSION['MAIL'])){
         <ul class="nav navbar-nav">
           <!-- Messages: style can be found in dropdown.less-->
           <li class="dropdown messages-menu">
-            
+
             <ul class="dropdown-menu">
-              
-              
-               
+
+
+
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
                   <li><!-- start message -->
@@ -165,7 +165,7 @@ if(!isset($_SESSION['MAIL'])){
             </ul>
           </li>
           <!-- Notifications: style can be found in dropdown.less -->
-          <?php               
+          <?php
               $alertas = $database->prepare("Select count(*) from Alerta where Cliente_Rut = '".$_SESSION['RUT']."' and Visto = 0");
               $alertas->execute();
               $cant = $alertas->fetchall();
@@ -173,7 +173,7 @@ if(!isset($_SESSION['MAIL'])){
               $alertas = $database->prepare("Select Descripcion,Visto  from Alerta where Cliente_Rut = '".$_SESSION['RUT']."'");
               $alertas->execute();
               $cant = $alertas->fetchall();
-                         
+
          ?>
 
 
@@ -183,8 +183,8 @@ if(!isset($_SESSION['MAIL'])){
               <i class="fa fa-bell-o"></i>
               <span class="label label-warning"><?php echo $cantidad ?></span>
             </a>
-            <script>  
-              function cambiar(v){                
+            <script>
+              function cambiar(v){
                 document.getElementById('texto').innerHTML = v;
               }
                 </script>
@@ -193,28 +193,28 @@ if(!isset($_SESSION['MAIL'])){
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
-                  
-                  <?php 
+
+                  <?php
 
                     foreach ($cant as $key => $value) {
                       # code...
                       if($value[1]==0){
                         ?>
-                       <li>                                
-                              <a data-toggle='modal' data-target='#modal-danger' <?php echo   "onclick = 'cambiar(".$key.")'" ?> >    
+                       <li>
+                              <a data-toggle='modal' data-target='#modal-danger' <?php echo   "onclick = 'cambiar(".$key.")'" ?> >
 
                               <?php    echo $value[0];?>
                                   </a>
 
                               </li>
-                              
-                              <?php   
+
+                              <?php
                       }
                     }
 
                     ?>
-                    
-                  
+
+
                 </ul>
               </li>
               <li class="footer"><a href="alertas.php">Verlas Todas</a></li>
@@ -226,7 +226,7 @@ if(!isset($_SESSION['MAIL'])){
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs"><?php                
+              <span class="hidden-xs"><?php
                 echo $_SESSION['NAME'];
                 ?></span>
             </a>
@@ -236,7 +236,7 @@ if(!isset($_SESSION['MAIL'])){
                 <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
 
                 <p>
-                  <?php                
+                  <?php
                 echo $_SESSION['NAME'];
                 ?>
                   <small>Administrador</small>
@@ -245,11 +245,11 @@ if(!isset($_SESSION['MAIL'])){
               <!-- Menu Body -->
               <li class="user-body">
                 <div class="row">
-                  
+
                   <div class="col-xs-4 text-center">
                     <a href="#">Contenido</a>
                   </div>
-                  
+
                   <div class="col-xs-4 text-center">
                     <a href="#">Opciones</a>
                   </div>
@@ -285,13 +285,13 @@ if(!isset($_SESSION['MAIL'])){
           <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
-          <p><?php                
+          <p><?php
                 echo $_SESSION['NAME'];
                 ?></p>
           <a href="#"> Administrador itecsoft</a>
         </div>
       </div>
-     
+
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MENÚ PRINCIPAL</li>
@@ -303,22 +303,22 @@ if(!isset($_SESSION['MAIL'])){
             </span>
           </a>
           <ul class="treeview-menu">
-            
+
             <li><a href="index.php"><i class="fa fa-circle-o"></i> Portada</a></li>
           </ul>
         </li>
         <li>
           <a href="mostrarmapa.php">
-            <i class="fa fa-map-o"></i> <span>Mapa</span>                        
+            <i class="fa fa-map-o"></i> <span>Mapa</span>
           </a>
-          
+
         </li>
         <li class="treeview">
           <a href="#">
             <i class="fa fa-gears"></i>
             <span>Opciones</span>
             <span class="pull-right-container">
-              no completo aún  
+              no completo aún
             </span>
           </a>
           <ul class="treeview-menu">
@@ -326,7 +326,7 @@ if(!isset($_SESSION['MAIL'])){
             <li><a href="sliders.php"><i class="fa fa-circle-o"></i> Limites</a></li>
             <li><a href="setearmapa.php"><i class="fa fa-circle-o"></i> Configurar mapa</a></li>
             <li><a href="pages/layout/fixed.html"><i class="fa fa-circle-o"></i> Config usuario</a></li>
-            
+
           </ul>
         </li>
         <li>
@@ -345,12 +345,12 @@ if(!isset($_SESSION['MAIL'])){
             </span>
           </a>
         </li>
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
       </ul>
     </section>
     <!-- /.sidebar -->
@@ -359,8 +359,8 @@ if(!isset($_SESSION['MAIL'])){
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <?php 
-$query = $database->prepare("select count(*) from sensor where magnitud < limin or magnitud > limax ");
+    <?php
+$query = $database->prepare("select count(*) from Sensor where Magnitud < Limin or Magnitud > Limax and Cliente_Rut = '".$_SESSION['RUT']."'");
 $query->execute();
 $resultado = $query->fetchall();
 
@@ -391,7 +391,7 @@ if($resultado[0][0] > 0 ){
     <script src="dist/js/jquery.min.js"></script>
     <script src="dist/js/lineas.js"></script>
     <script src="dist/js/pie.js"></script>
-        
+
 
     <!-- Main content -->
     <section class="content">
@@ -400,30 +400,31 @@ if($resultado[0][0] > 0 ){
                 <div>
                   <canvas id="line-chartcanvas"></canvas>
                 </div>
-                
+
               </div>
 
               <!-- javascript -->
-                
-          
+
+
 
       <div class="row">
-        
+
         <!-- ./col -->
-        
 
 
-        <?php $var = $database->prepare("SELECT * FROM sensor Where activo = 1");
+
+        <?php $var = $database->prepare("SELECT * FROM Sensor Where Activo = 1 and Cliente_Rut = '".$_SESSION['RUT']."'");
 $var->execute();
 // value 4  limite inferior
 // value 5 limite superior
 $sensores = $var->fetchall();
 foreach ($sensores as $key => $value) {
   # code...
-  
-  if($value[1] == "Temperatura"){
-    if($value[2] > $value[5] ){
-      
+
+  if($value[0] == "Temperatura"){
+
+    if($value[1] > $value[4] ){
+
       ?>
       <div class="col-lg-3 col-xs-6">
           <!-- small box -->
@@ -433,15 +434,15 @@ foreach ($sensores as $key => $value) {
 
               <p>Temperatura</p>
             </div>
-            
+
             <a href="temperatura.php" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
 
         </div>
 
-        <?php  
+        <?php
     }
-    if($value[2] < $value[4] ){
+    if($value[1] < $value[3] ){
       ?>
       <div class="col-lg-3 col-xs-6">
           <!-- small box -->
@@ -451,174 +452,175 @@ foreach ($sensores as $key => $value) {
 
               <p>Tepmeratura</p>
             </div>
-            
+
             <a href="temperatura" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
-        <?php  
+        <?php
     }
-    if($value[2] > $value[4] && $value[2] < $value[5] ){
+    if($value[1] < $value[4] && $value[1] > $value[3] ){
       ?>
       <div class="col-lg-3 col-xs-6">
           <!-- small box -->
           <div class="small-box bg-green">
             <div class="inner">
-              <h3><?php echo $value[2] ?> Celcius<sup style="font-size: 20px"></sup></h3>
+              <h3><?php echo $value[1] ?>°Celcius<sup style="font-size: 20px"></sup></h3>
 
               <p>Temperatura</p>
             </div>
-            
+
             <a href="temperatura" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
-        <?php  
+        <?php
     }
     $_SESSION['temperatura'] = $value[2];
   }
-  if($value[1] == "Presion"){
-    if($value[2] > $value[5] ){
+  if($value[0] == "Presion"){
+    if($value[1] > $value[4] ){
       ?>
       <div class="col-lg-3 col-xs-6">
           <!-- small box -->
           <div class="small-box bg-red">
             <div class="inner">
-              <h3><?php echo $value[2] ?> psi<sup style="font-size: 20px"></sup></h3>
+              <h3><?php echo $value[1] ?> psi<sup style="font-size: 20px"></sup></h3>
 
               <p>Presion</p>
             </div>
-            
+
             <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
-        <?php  
+        <?php
     }
-    if($value[2] < $value[4] ){
+    if($value[1] < $value[3] ){
       ?>
       <div class="col-lg-3 col-xs-6">
           <!-- small box -->
           <div class="small-box bg-light-blue">
             <div class="inner">
-              <h3><?php echo $value[2] ?> psi<sup style="font-size: 20px"></sup></h3>
+              <h3><?php echo $value[1] ?> psi<sup style="font-size: 20px"></sup></h3>
 
               <p>Presion</p>
             </div>
-            
+
             <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
-        <?php  
+        <?php
     }
-    if($value[2] > $value[4] && $value[2] < $value[5] ){
+    if($value[1] > $value[3] && $value[1] < $value[4] ){
       ?>
       <div class="col-lg-3 col-xs-6">
           <!-- small box -->
           <div class="small-box bg-green">
             <div class="inner">
-              <h3><?php echo $value[2] ?> psi<sup style="font-size: 20px"></sup></h3>
+              <h3><?php echo $value[1] ?> psi<sup style="font-size: 20px"></sup></h3>
 
               <p>Presion</p>
             </div>
-            
+
             <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
-        <?php  
+        <?php
     }
     $_SESSION['presion'] = $value[2];
   }
-  if($value[1] == "Humedad"){
-    if($value[2] > $value[5] ){
+  if($value[0] == "Presion"){
+    if($value[1] > $value[4] ){
       ?>
       <div class="col-lg-3 col-xs-6">
           <!-- small box -->
           <div class="small-box bg-red">
             <div class="inner">
-              <h3><?php echo $value[2] ?> %<sup style="font-size: 20px"></sup></h3>
+              <h3><?php echo $value[1] ?> %<sup style="font-size: 20px"></sup></h3>
 
               <p>Humedad</p>
             </div>
-            
+
             <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
-        <?php  
+        <?php
     }
-    if($value[2] < $value[4] ){
+    if($value[1] < $value[3] ){
       ?>
       <div class="col-lg-3 col-xs-6">
           <!-- small box -->
           <div class="small-box bg-light-blue">
             <div class="inner">
-              <h3><?php echo $value[2] ?> %<sup style="font-size: 20px"></sup></h3>
+              <h3><?php echo $value[1] ?> %<sup style="font-size: 20px"></sup></h3>
 
               <p>Humedad</p>
             </div>
-            
+
             <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
-        <?php  
+        <?php
     }
-    if($value[2] > $value[4] && $value[2] < $value[5] ){
+    if($value[1] > $value[3] && $value[1] < $value[4] ){
       ?>
       <div class="col-lg-3 col-xs-6">
           <!-- small box -->
           <div class="small-box bg-green">
             <div class="inner">
-              <h3><?php echo $value[2] ?> %<sup style="font-size: 20px"></sup></h3>
+              <h3><?php echo $value[1] ?> %<sup style="font-size: 20px"></sup></h3>
 
               <p>Humedad</p>
             </div>
-            
+
             <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
-        <?php  
+        <?php
     }
+    $_SESSION['presion'] = $value[2];
   }
-  $_SESSION['humedad'] = "hola mundo";
+
 }
  ?>
 
         <!-- ./col -->
 
       </div>
-      
-      <section class="content">       
+
+      <section class="content">
           <!-- BAR CHART -->
           <div class="box box-success">
             <div class="box-header with-border">
               <h3 class="box-title">Consumo del agua</h3>
-                            
+
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                 </button>
                 <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
               </div>
             </div>
-            
+
             <div class="box-body">
-            <div>                                              
+            <div>
                 <div >
                 <canvas id="pie-chartcanvas" style="height:230px"></canvas>
-                </div>                          
+                </div>
             <!-- /.box-body -->
           </div>
 
           <!-- /.box -->
 
-        
-        <!-- /.col (RIGHT) -->    
-      <!-- /.row -->      
+
+        <!-- /.col (RIGHT) -->
+      <!-- /.row -->
         </section>
 
 
       <section class="content">
-      <!-- Small boxes (Stat box) -->      
+      <!-- Small boxes (Stat box) -->
       <div class="row">
-      
-         
-         
+
+
+
 
 
        </div>
@@ -629,22 +631,22 @@ foreach ($sensores as $key => $value) {
         <!-- Left col -->
         <section class="col-lg-7 connectedSortable">
           <!-- Custom tabs (Charts with tabs)-->
-          
+
           <!-- /.nav-tabs-custom -->
 
           <!-- Chat box -->
-          
+
           <!-- /.box (chat box) -->
 
           <!-- TO DO List -->
-          
+
 
           <!-- quick email widget -->
-          
+
           <!-- solid sales graph -->
-          
+
           <!-- Calendar -->
-          
+
           <!-- /.box -->
 
         </section>

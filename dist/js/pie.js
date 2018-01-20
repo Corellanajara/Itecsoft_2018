@@ -5,7 +5,7 @@ $(document).ready(function() {
 	var ctx = $("#pie-chartcanvas");
 
 	$.ajax({
-		url : "http://localhost:82/itecsoft/gentelella/production/data.php",
+		url : "http://localhost:80/Itecsoft_2018/data.php",
 		type : "GET",
 		success : function(data){
 			console.log(data);
@@ -22,15 +22,15 @@ $(document).ready(function() {
 			for (var i = 0; i < len; i++) {
 				if (data[i].Id == "1") {
 					sensor.Temperatura.push(data[i].Magnitud);
-					
+
 				}
 				else if (data[i].Id == "2") {
 					sensor.Presion.push(data[i].Magnitud);
-					
+
 				}
 				else if(data[i].Id == "3"){
 					sensor.Humedad.push(data[i].Magnitud);
-					dias=dias+1;	
+					dias=dias+1;
 				}
 
 			}
@@ -50,7 +50,7 @@ $(document).ready(function() {
 						label : "Sector 1",
 						data : sensor.Humedad,
 						backgroundColor : ["red","blue","green","yellow","lightblue"
-						],						
+						],
 						fill : false,
 						lineTension : 0,
 						pointRadius : 5
@@ -78,5 +78,5 @@ $(document).ready(function() {
 		options : options
 	} );
 }
-});	
+});
 });
