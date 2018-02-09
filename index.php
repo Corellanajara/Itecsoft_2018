@@ -166,11 +166,11 @@ if(!isset($_SESSION['MAIL'])){
           </li>
           <!-- Notifications: style can be found in dropdown.less -->
           <?php
-              $alertas = $database->prepare("Select count(*) from Alerta where Cliente_Rut = '".$_SESSION['RUT']."' and Visto = 0");
+              $alertas = $database->prepare("Select count(*) from alerta where cliente_id = '".$_SESSION['ID']."' and visto = 0");
               $alertas->execute();
               $cant = $alertas->fetchall();
               $cantidad = $cant[0][0];
-              $alertas = $database->prepare("Select Descripcion,Visto  from Alerta where Cliente_Rut = '".$_SESSION['RUT']."'");
+              $alertas = $database->prepare("Select text,visto  from alerta where cliente_id = '".$_SESSION['ID']."'");
               $alertas->execute();
               $cant = $alertas->fetchall();
 
@@ -360,7 +360,7 @@ if(!isset($_SESSION['MAIL'])){
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <?php
-$query = $database->prepare("select count(*) from Sensor where Magnitud < Limin or Magnitud > Limax and Cliente_Rut = '".$_SESSION['RUT']."'");
+$query = $database->prepare(" select count(*) from temperatura, presion,humedad , tope where temperatura.magnitud < tope.tempmax and temperatura.magnitud > tope.tempmin and humedad.magnitud < tope.humemax and humedad.magnitud > tope.humemin and presion.magnitud < tope.presmax and presion.magnitud > tope.presmin and cliente_id = '".$_SESSION['ID']."'");
 $query->execute();
 $resultado = $query->fetchall();
 
@@ -413,8 +413,9 @@ if($resultado[0][0] > 0 ){
 
 
 
-        <?php $var = $database->prepare("SELECT * FROM Sensor Where Activo = 1 and Cliente_Rut = '".$_SESSION['RUT']."'");
-$var->execute();
+        <?php
+      $var = $database->prepare("SELECT * FROM temperatura Where  cliente_id = '".$_SESSION['ID']."'");
+      $var->execute();
 // value 4  limite inferior
 // value 5 limite superior
 $sensores = $var->fetchall();
@@ -474,8 +475,16 @@ foreach ($sensores as $key => $value) {
         </div>
         <?php
     }
-    $_SESSION['temperatura'] = $value[2];
+
   }
+}
+
+$var = $database->prepare("SELECT * FROM presion Where  cliente_id = '".$_SESSION['ID']."'");
+$var->execute();
+// value 4  limite inferior
+// value 5 limite superior
+$sensores = $var->fetchall();
+foreach ($sensores as $key => $value) {
   if($value[0] == "Presion"){
     if($value[1] > $value[4] ){
       ?>
@@ -483,7 +492,7 @@ foreach ($sensores as $key => $value) {
           <!-- small box -->
           <div class="small-box bg-red">
             <div class="inner">
-              <h3><?php echo $value[1] ?> psi<sup style="font-size: 20px"></sup></h3>
+              <h3><?php echo $value[0] ?> psi<sup style="font-size: 20px"></sup></h3>
 
               <p>Presion</p>
             </div>
