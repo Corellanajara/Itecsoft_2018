@@ -3,7 +3,7 @@ if(!isset($_SESSION['MAIL'])){
   header("Location: login.html");
   exit;
 }
-  //error_reporting(0);
+  error_reporting(E_ALL);
  ?>
 <!DOCTYPE html>
 <html>
@@ -38,14 +38,6 @@ if(!isset($_SESSION['MAIL'])){
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
-
-  <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -170,11 +162,12 @@ if(!isset($_SESSION['MAIL'])){
               $alertas->execute();
               $cant = $alertas->fetchall();
               $cantidad = $cant[0][0];
-              $alertas = $database->prepare("Select text,visto  from alerta where cliente_id = '".$_SESSION['ID']."'");
+              $alertas = $database->prepare("Select texto,visto  from alerta where cliente_id = '".$_SESSION['ID']."'");
               $alertas->execute();
               $cant = $alertas->fetchall();
 
          ?>
+
 
 
 
@@ -198,7 +191,7 @@ if(!isset($_SESSION['MAIL'])){
 
                     foreach ($cant as $key => $value) {
                       # code...
-                      if($value[1]==0){
+                      if($value[3]==0){
                         ?>
                        <li>
                               <a data-toggle='modal' data-target='#modal-danger' <?php echo   "onclick = 'cambiar(".$key.")'" ?> >
@@ -358,9 +351,10 @@ if(!isset($_SESSION['MAIL'])){
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
+
     <!-- Content Header (Page header) -->
     <?php
-$query = $database->prepare(" select count(*) from temperatura, presion,humedad , tope where temperatura.magnitud < tope.tempmax and temperatura.magnitud > tope.tempmin and humedad.magnitud < tope.humemax and humedad.magnitud > tope.humemin and presion.magnitud < tope.presmax and presion.magnitud > tope.presmin and cliente_id = '".$_SESSION['ID']."'");
+$query = $database->prepare("select count(*) from temperatura, presion,humedad , tope where temperatura.magnitud > tope.tempmax or temperatura.magnitud < tope.tempmin and humedad.magnitud > tope.humemax or humedad.magnitud < tope.humemin or presion.magnitud > tope.presmax or presion.magnitud < tope.presmin and tope.cliente_id = '".$_SESSION['ID']."'");
 $query->execute();
 $resultado = $query->fetchall();
 
@@ -403,195 +397,194 @@ if($resultado[0][0] > 0 ){
 
               </div>
 
-              <!-- javascript -->
-
-
-
       <div class="row">
 
-        <!-- ./col -->
-
-
 
         <?php
-      $var = $database->prepare("SELECT * FROM temperatura Where  cliente_id = '".$_SESSION['ID']."'");
-      $var->execute();
-// value 4  limite inferior
-// value 5 limite superior
-$sensores = $var->fetchall();
-foreach ($sensores as $key => $value) {
-  # code...
 
-  if($value[0] == "Temperatura"){
 
-    if($value[1] > $value[4] ){
+        $tope = $database->prepare(" select * from tope where  cliente_id = '".$_SESSION['ID']."'");
+        $tope->execute();
+        $topes = $tope->fetchall();
 
-      ?>
-      <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-red">
-            <div class="inner">
-              <h3><?php echo $value[2] ?> celcius<sup style="font-size: 20px"></sup></h3>
+        $var = $database->prepare("SELECT * FROM temperatura Where  cliente_id = '".$_SESSION['ID']."' order by id desc limit 1 ");
+        $var->execute();
+        $sensores = $var->fetchall();
+        foreach ($sensores as $key => $value) {
 
-              <p>Temperatura</p>
-            </div>
+            if($value[0] > $topes[0][0] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-red">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> celcius<sup style="font-size: 20px"></sup></h3>
 
-            <a href="temperatura.php" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
+                      <p>Temperatura</p>
+                    </div>
 
-        </div>
+                    <a href="temperatura.php" class="small-box-footer">sector <?php echo $value[2] ?> <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
 
-        <?php
-    }
-    if($value[1] < $value[3] ){
-      ?>
-      <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-light-blue">
-            <div class="inner">
-              <h3><?php echo $value[2] ?> celcius<sup style="font-size: 20px"></sup></h3>
+                </div>
 
-              <p>Tepmeratura</p>
-            </div>
+                <?php
+            }
 
-            <a href="temperatura" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <?php
-    }
-    if($value[1] < $value[4] && $value[1] > $value[3] ){
-      ?>
-      <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-green">
-            <div class="inner">
-              <h3><?php echo $value[1] ?>°Celcius<sup style="font-size: 20px"></sup></h3>
+            if($value[0] < $topes[0][1] ){
 
-              <p>Temperatura</p>
-            </div>
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-light-blue">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> celcius<sup style="font-size: 20px"></sup></h3>
 
-            <a href="temperatura" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <?php
-    }
+                      <p>Tepmeratura</p>
+                    </div>
 
-  }
-}
+                    <a href="temperatura.php" class="small-box-footer">sector <?php echo $value[2] ?> <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
 
-$var = $database->prepare("SELECT * FROM presion Where  cliente_id = '".$_SESSION['ID']."'");
-$var->execute();
-// value 4  limite inferior
-// value 5 limite superior
-$sensores = $var->fetchall();
-foreach ($sensores as $key => $value) {
-  if($value[0] == "Presion"){
-    if($value[1] > $value[4] ){
-      ?>
-      <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-red">
-            <div class="inner">
-              <h3><?php echo $value[0] ?> psi<sup style="font-size: 20px"></sup></h3>
+            if($value[0] < $topes[0][0] && $value[0] > $topes[0][1] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-green">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?>°Celcius<sup style="font-size: 20px"></sup></h3>
 
-              <p>Presion</p>
-            </div>
+                      <p>Temperatura</p>
+                    </div>
 
-            <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <?php
-    }
-    if($value[1] < $value[3] ){
-      ?>
-      <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-light-blue">
-            <div class="inner">
-              <h3><?php echo $value[1] ?> psi<sup style="font-size: 20px"></sup></h3>
+                    <a href="temperatura" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
 
-              <p>Presion</p>
-            </div>
+        }
 
-            <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <?php
-    }
-    if($value[1] > $value[3] && $value[1] < $value[4] ){
-      ?>
-      <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-green">
-            <div class="inner">
-              <h3><?php echo $value[1] ?> psi<sup style="font-size: 20px"></sup></h3>
 
-              <p>Presion</p>
-            </div>
+        $var = $database->prepare("SELECT * FROM presion Where  cliente_id = '".$_SESSION['ID']."'");
+        $var->execute();
+        $sensores = $var->fetchall();
+        foreach ($sensores as $key => $value) {
 
-            <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <?php
-    }
-    $_SESSION['presion'] = $value[2];
-  }
-  if($value[0] == "Presion"){
-    if($value[1] > $value[4] ){
-      ?>
-      <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-red">
-            <div class="inner">
-              <h3><?php echo $value[1] ?> %<sup style="font-size: 20px"></sup></h3>
+            if($value[0] > $topes[0][2] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-red">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> psi<sup style="font-size: 20px"></sup></h3>
 
-              <p>Humedad</p>
-            </div>
+                      <p>Presion</p>
+                    </div>
 
-            <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <?php
-    }
-    if($value[1] < $value[3] ){
-      ?>
-      <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-light-blue">
-            <div class="inner">
-              <h3><?php echo $value[1] ?> %<sup style="font-size: 20px"></sup></h3>
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+            if($value[0] < $topes[0][3] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-light-blue">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> psi<sup style="font-size: 20px"></sup></h3>
 
-              <p>Humedad</p>
-            </div>
+                      <p>Presion</p>
+                    </div>
 
-            <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <?php
-    }
-    if($value[1] > $value[3] && $value[1] < $value[4] ){
-      ?>
-      <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-green">
-            <div class="inner">
-              <h3><?php echo $value[1] ?> %<sup style="font-size: 20px"></sup></h3>
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+            if($value[0] > $topes[0][3] && $value[0] < $topes[0][2] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-green">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> psi<sup style="font-size: 20px"></sup></h3>
 
-              <p>Humedad</p>
-            </div>
+                      <p>Presion</p>
+                    </div>
 
-            <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <?php
-    }
-    $_SESSION['presion'] = $value[2];
-  }
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
 
-}
- ?>
+          }
 
-        <!-- ./col -->
+        $var = $database->prepare("SELECT * FROM presion Where  cliente_id = '".$_SESSION['ID']."'");
+        $var->execute();
+        $sensores = $var->fetchall();
+        foreach ($sensores as $key => $value) {
+
+            if($value[0] > $topes[0][4] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-red">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> %<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Humedad</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+            if($value[0] < $topes[0][5] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-light-blue">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> %<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Humedad</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+            if($value[0] > $topes[0][5] && $value[0] < $topes[0][4] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-green">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> %<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Humedad</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+
+        }
+
+
+         ?>
+
+                <!-- ./col -->
 
       </div>
 
@@ -613,14 +606,9 @@ foreach ($sensores as $key => $value) {
                 <div >
                 <canvas id="pie-chartcanvas" style="height:230px"></canvas>
                 </div>
-            <!-- /.box-body -->
+
           </div>
 
-          <!-- /.box -->
-
-
-        <!-- /.col (RIGHT) -->
-      <!-- /.row -->
         </section>
 
 
@@ -639,24 +627,6 @@ foreach ($sensores as $key => $value) {
       <div class="row">
         <!-- Left col -->
         <section class="col-lg-7 connectedSortable">
-          <!-- Custom tabs (Charts with tabs)-->
-
-          <!-- /.nav-tabs-custom -->
-
-          <!-- Chat box -->
-
-          <!-- /.box (chat box) -->
-
-          <!-- TO DO List -->
-
-
-          <!-- quick email widget -->
-
-          <!-- solid sales graph -->
-
-          <!-- Calendar -->
-
-          <!-- /.box -->
 
         </section>
         <!-- right col -->

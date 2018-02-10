@@ -3,7 +3,7 @@ if(!isset($_SESSION['MAIL'])){
   header("Location :pages/examples/login.html");
   exit;
 }
-error_reporting(1);
+  error_reporting(E_ALL);
  ?>
 <!DOCTYPE html>
 <html>
@@ -13,7 +13,7 @@ error_reporting(1);
   <?php
     include("database.php");
      ?>
-  <title>ItecSoft | Mapa</title>
+  <title>ItecSoft |Portada</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -37,18 +37,8 @@ error_reporting(1);
   <link rel="stylesheet" href="bower_components/bootstrap-daterangepicker/daterangepicker.css">
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
-
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
-
-  <!-- Google Font -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -169,15 +159,16 @@ error_reporting(1);
           </li>
           <!-- Notifications: style can be found in dropdown.less -->
           <?php
-              $alertas = $database->prepare("Select count(*) from Alerta where Cliente_Rut = '".$_SESSION['RUT']."' and Visto = 0 ");
+              $alertas = $database->prepare("Select count(*) from alerta where cliente_id = '".$_SESSION['ID']."' and visto = 0");
               $alertas->execute();
               $cant = $alertas->fetchall();
               $cantidad = $cant[0][0];
-              $alertas = $database->prepare("Select Descripcion,Visto  from Alerta where Cliente_Rut = '".$_SESSION['RUT']."'");
+              $alertas = $database->prepare("Select texto,visto  from alerta where cliente_id = '".$_SESSION['ID']."'");
               $alertas->execute();
               $cant = $alertas->fetchall();
 
          ?>
+
 
 
 
@@ -201,7 +192,7 @@ error_reporting(1);
 
                     foreach ($cant as $key => $value) {
                       # code...
-                      if($value[1]==0){
+                      if($value[3]==0){
                         ?>
                        <li>
                               <a data-toggle='modal' data-target='#modal-danger' <?php echo   "onclick = 'cambiar(".$key.")'" ?> >
@@ -209,7 +200,7 @@ error_reporting(1);
                               <?php    echo $value[0];?>
                                   </a>
 
-                              </li>"
+                              </li>
 
                               <?php
                       }
@@ -306,12 +297,12 @@ error_reporting(1);
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Portada Simple</a></li>
-            <li><a href="index.php"><i class="fa fa-circle-o"></i> Portada Avanzada</a></li>
+
+            <li><a href="index.php"><i class="fa fa-circle-o"></i> Portada</a></li>
           </ul>
         </li>
         <li>
-          <a href="mapa.php">
+          <a href="mostrarmapa.php">
             <i class="fa fa-map-o"></i> <span>Mapa</span>
           </a>
 
@@ -321,14 +312,15 @@ error_reporting(1);
             <i class="fa fa-gears"></i>
             <span>Opciones</span>
             <span class="pull-right-container">
-              no disponible aun
+              no completo aún
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/layout/top-nav.html"><i class="fa fa-circle-o"></i> Top Navigation</a></li>
-            <li><a href="pages/layout/boxed.html"><i class="fa fa-circle-o"></i> Boxed</a></li>
-            <li><a href="pages/layout/fixed.html"><i class="fa fa-circle-o"></i> Fixed</a></li>
-            <li><a href="pages/layout/collapsed-sidebar.html"><i class="fa fa-circle-o"></i> Collapsed Sidebar</a></li>
+            <li><a href="configuracion.php"><i class="fa fa-circle-o"></i> Activar o desactivar</a></li>
+            <li><a href="sliders.php"><i class="fa fa-circle-o"></i> Limites</a></li>
+            <li><a href="setearmapa.php"><i class="fa fa-circle-o"></i> Configurar mapa</a></li>
+            <li><a href="pages/layout/fixed.html"><i class="fa fa-circle-o"></i> Config usuario</a></li>
+
           </ul>
         </li>
         <li>
@@ -442,28 +434,28 @@ echo '<p hidden id="cantidad">'.sizeof($arreglo).'</p>';
  ?>
 
 
-<?php
-$var = $database->prepare("SELECT * FROM Sensor Where Activo = 1 and Cliente_Rut = '".$_SESSION['RUT']."'");");
-$var->execute();
-// value 4  limite inferior
-// value 5 limite superior
-$sensores = $var->fetchall();
-foreach ($sensores as $key => $value) {
-  # code...
+ <?php
+ $temp = $database->prepare("SELECT * FROM temperatura Where cliente_id = 1");
+ $temp->execute();
+ $temperatura = $temp->fetchall();
+ foreach ($temperatura as $key => $value) {
+   echo "<p hidden id='temperatura'> ". $value[0] ." </p> ";
 
-  if($value[0] == "Temperatura"){
-    echo "<p id='temperatura'> ". $value[1] ." </p> ";
-  }
-  if($value[0] == "Humedad"){
-    echo "<p id='humedad'> ". $value[1] ." </p> ";
-  }
-  if($value[0] == "Presion"){
-    echo "<p id='presion'> ". $value[1] ." </p> ";
-  }
+ }
+ $hume = $database->prepare("SELECT * FROM humedad Where cliente_id = 1");
+ $hume->execute();
+ $humedad = $hume->fetchall();
+ foreach ($humedad as $key => $value) {
+   echo "<p hidden id='humedad'> ". $value[0] ." </p> ";
+ }
+ $pres = $database->prepare("SELECT * FROM presion Where cliente_id = 1");
+ $pres->execute();
+ $presion = $pres->fetchall();
+ foreach ($presion as $key => $value) {
+   echo "<p hidden id='presion'> ". $value[0] ." </p> ";
+ }
+        ?>
 
-}
-
-       ?>
 <script>
 
   document.getElementById("temperatura").style.visibility = "hidden";

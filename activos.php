@@ -22,24 +22,34 @@ if(!$mysqli){
 }
 
 //query to get data from the table
-$query = sprintf("SELECT Nombre,Magnitud,Unidad,Limin,Limax,Activo,Hora  FROM Sensor ORDER BY Hora where Cliente_Rut = '".$_SESSION['RUT']."'");
-
+$temperatura = sprintf("SELECT *  FROM temperatura  where cliente_id = ".$_SESSION['ID']." ORDER BY id");
+$humedad = sprintf("SELECT *  FROM humedad where cliente_id = ".$_SESSION['ID']." ORDER BY id");
+$presion = sprintf("SELECT *  FROM presion  where cliente_id = ".$_SESSION['ID']." ORDER BY id");
 //execute query
-$result = $mysqli->query($query);
+$result1 = $mysqli->query($temperatura);
+$result2 = $mysqli->query($humedad);
+$result3 = $mysqli->query($presion);
 
 //loop through the returned data
-$data = array();
-foreach ($result as $row) {
-	$data[] = $row;
 
+$data = array();
+foreach ($result1 as $row) {
+	$data[] = $row;
+}
+foreach ($result2 as $row) {
+	$data[] = $row;
+}
+foreach ($result3 as $row) {
+	$data[] = $row;
 }
 
 //free memory associated with result
-$result->close();
+$result1->close();
+$result2->close();
+$result3->close();
 
 //close connection
 $mysqli->close();
 
 //now print the data
-
-	print json_encode($data);
+print json_encode($data);

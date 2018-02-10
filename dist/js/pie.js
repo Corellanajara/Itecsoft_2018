@@ -5,7 +5,7 @@ $(document).ready(function() {
 	var ctx = $("#pie-chartcanvas");
 
 	$.ajax({
-		url : "http://localhost:80/Itecsoft_2018/data.php",
+		url : "http://localhost/Itecsoft_2018/activos.php",
 		type : "GET",
 		success : function(data){
 			console.log(data);

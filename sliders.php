@@ -162,11 +162,11 @@ if(!isset($_SESSION['MAIL'])){
           </li>
           <!-- Notifications: style can be found in dropdown.less -->
           <?php
-              $alertas = $database->prepare("Select count(*) from Alerta where Cliente_Rut = '".$_SESSION['RUT']."' and Visto = 0");
+              $alertas = $database->prepare("Select count(*) from alerta where cliente_id = '".$_SESSION['ID']."' and visto = 0");
               $alertas->execute();
               $cant = $alertas->fetchall();
               $cantidad = $cant[0][0];
-              $alertas = $database->prepare("Select Descripcion,Visto  from Alerta where Cliente_Rut = '".$_SESSION['RUT']."'");
+              $alertas = $database->prepare("Select texto,visto  from alerta where cliente_id = '".$_SESSION['ID']."'");
               $alertas->execute();
               $cant = $alertas->fetchall();
 
@@ -194,7 +194,7 @@ if(!isset($_SESSION['MAIL'])){
 
                     foreach ($cant as $key => $value) {
                       # code...
-                      if($value[1]==0){
+                      if($value[3]==0){
                         ?>
                        <li>
                               <a data-toggle='modal' data-target='#modal-danger' <?php echo   "onclick = 'cambiar(".$key.")'" ?> >
@@ -202,7 +202,7 @@ if(!isset($_SESSION['MAIL'])){
                               <?php    echo $value[0];?>
                                   </a>
 
-                              </li>"
+                              </li>
 
                               <?php
                       }
@@ -377,7 +377,8 @@ if(!isset($_SESSION['MAIL'])){
             </div>
             <div class="box-body">
               <!-- Minimal style -->
-				<?php $var = $database->prepare("SELECT * FROM Sensor Where Activo = 1 LIMIT 3 and Cliente_Rut = '".$_SESSION['RUT']."'");
+				<?php
+          $var = $database->prepare("SELECT * FROM tope where cliente_id = '".$_SESSION['ID']."' limit 1 ");
 					$var->execute();
 					// value 4  limite inferior
 					// value 5 limite superior
@@ -388,53 +389,31 @@ if(!isset($_SESSION['MAIL'])){
               <form action="cfg.php" method="post">
               <?php
               	foreach ($sensores as $key => $value) {
-              		 if($value[0]== "Temperatura"){
+
               		 	?>
 							<input type="text" value="" class="slider form-control" data-slider-min="-200" data-slider-max="200"
-                         data-slider-step="1" data-slider-value="[<?php echo $value[3] ?>,<?php echo $value[4] ?>]" data-slider-orientation="horizontal"
+                         data-slider-step="1" data-slider-value="[<?php echo $value[0] ?>,<?php echo $value[1] ?>]" data-slider-orientation="horizontal"
                          data-slider-selection="before" data-slider-tooltip="show" data-slider-id="red" id="price-min" name="temperatura">
 
                   		<p>Temperatura</p>
-              		 	<?php
-              		 }
-              		 if($value[0]== "Humedad"){
-              		 	?>
+
 							<input type="text" value="" class="slider form-control" data-slider-min="-200" data-slider-max="200"
-                         data-slider-step="1" data-slider-value="[<?php echo $value[3] ?>,<?php echo $value[4] ?>]" data-slider-orientation="horizontal"
+                         data-slider-step="1" data-slider-value="[<?php echo $value[2] ?>,<?php echo $value[3] ?>]" data-slider-orientation="horizontal"
                          data-slider-selection="before" data-slider-tooltip="show" data-slider-id="blue" id="price-min" name="humedad">
 
                   		<p>Humedad</p>
-              		 	<?php
-              		 }
-              		 if($value[0]== "Presion"){
-              		 	?>
+
 							<input type="text" value="" class="slider form-control" data-slider-min="-200" data-slider-max="200"
-                         data-slider-step="1" data-slider-value="[<?php echo $value[3] ?>,<?php echo $value[4] ?>]" data-slider-orientation="horizontal"
+                         data-slider-step="1" data-slider-value="[<?php echo $value[4] ?>,<?php echo $value[5] ?>]" data-slider-orientation="horizontal"
                          data-slider-selection="before" data-slider-tooltip="show" data-slider-id="red" id="price-min" name="presion">
 
                   		<p>Presión</p>
-              		 	<?php
-              		 }
-              		 if($value[0]== "Presion2"){
-              		 	?>
-							<input type="text" value="" class="slider form-control" data-slider-min="-200" data-slider-max="200"
-                         data-slider-step="1" data-slider-value="[<?php echo $value[3] ?>,<?php echo $value[4] ?>]" data-slider-orientation="horizontal"
-                         data-slider-selection="before" data-slider-tooltip="show" data-slider-id="blue" id="price-min" name="presion2">
 
-                  		<p>Presion 2</p>
-              		 	<?php
-              		 }
-              		 if($value[0]== "Otro"){
-              		 	?>
-							<input type="text" value="" class="slider form-control" data-slider-min="-200" data-slider-max="200"
-                         data-slider-step="1" data-slider-value="[<?php echo $value[4] ?>,<?php echo $value[5] ?>]" data-slider-orientation="horizontal"
-                         data-slider-selection="before" data-slider-tooltip="show" data-slider-id="red" id="price-min" name="otro">
 
-                  		<p>Otro</p>
               		 	<?php
               		 }
 
-              	}
+
                ?>
                 <input type="submit" value="Guardar">
                 </form>

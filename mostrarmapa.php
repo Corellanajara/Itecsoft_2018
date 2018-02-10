@@ -38,8 +38,8 @@ if(!isset($_SESSION['MAIL'])){
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -169,11 +169,11 @@ if(!isset($_SESSION['MAIL'])){
           </li>
           <!-- Notifications: style can be found in dropdown.less -->
           <?php
-              $alertas = $database->prepare("Select count(*) from Alerta where Cliente_Rut = '".$_SESSION['RUT']."' and Visto = 0");
+              $alertas = $database->prepare("Select count(*) from alerta where cliente_id = '".$_SESSION['ID']."' and visto = 0");
               $alertas->execute();
               $cant = $alertas->fetchall();
               $cantidad = $cant[0][0];
-              $alertas = $database->prepare("Select Descripcion,Visto  from Alerta where Cliente_Rut = '".$_SESSION['RUT']."'");
+              $alertas = $database->prepare("Select texto,visto  from alerta where cliente_id = '".$_SESSION['ID']."'");
               $alertas->execute();
               $cant = $alertas->fetchall();
 
@@ -393,11 +393,11 @@ include("conexion.php");
       if(isset($_GET['aksi']) == 'delete'){
         // escaping, additionally removing everything that could be (html/javascript-) code
         $nik = mysqli_real_escape_string($con,(strip_tags($_GET["nik"],ENT_QUOTES)));
-        $cek = mysqli_query($con, "SELECT * FROM sector3ptos WHERE id='$nik' and Cliente_Rut = '".$_SESSION['RUT']."'");
+        $cek = mysqli_query($con, "SELECT * FROM sector3ptos WHERE id='$nik' and cliente_id = '".$_SESSION['ID']."'");
         if(mysqli_num_rows($cek) == 0){
           echo '<div class="alert alert-info alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> No se encontraron datos.</div>';
         }else{
-          $delete = mysqli_query($con, "DELETE FROM sector3ptos WHERE id='$nik' and Cliente_Rut = '".$_SESSION['RUT']."'");
+          $delete = mysqli_query($con, "DELETE FROM sector3ptos WHERE id='$nik' and cliente_id = '".$_SESSION['ID']."'");
           if($delete){
             echo '<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> Datos eliminado correctamente.</div>';
           }else{
@@ -425,7 +425,7 @@ include("conexion.php");
         </tr>
         <?php
 
-        $sql = mysqli_query($con, "SELECT * FROM sector3ptos ORDER BY id ASC where Cliente_Rut = '".$_SESSION['RUT']."'");
+        $sql = mysqli_query($con, "SELECT * FROM sector3ptos where cliente_id = '".$_SESSION['ID']."' ORDER BY id ASC");
 
         if(mysqli_num_rows($sql) == 0){
           echo '<tr><td colspan="8">No hay datos.</td></tr>';
@@ -477,7 +477,7 @@ include("conexion.php");
 
 
 <?php
-$var = $database->prepare("SELECT * from sector3ptos Where id > 0 where Cliente_Rut = '".$_SESSION['RUT']."'");
+$var = $database->prepare("SELECT * from sector3ptos where cliente_id = '".$_SESSION['ID']."'");
 $var->execute();
 // value 4  limite inferior
 // value 5 limite superior
@@ -487,38 +487,38 @@ echo "<p hidden id='total'> ".sizeof($puntos)."</p>";
 foreach ($puntos as $key => $value) {
   # code...
 
-  if($value[8] != null){
-    echo "<p hidden id='nombre".$key."'> ".$value[8]."</p>";
+  if($value[6] != null){
+    echo "<p hidden id='nombre".$key."'> ".$value[6]."</p>";
   }
   echo "<br>";
 
   if($value[1]!=null){
-    echo " <p hidden id ='l1".$key."' > ".$value[1]."</p>";
+    echo " <p hidden id ='l1".$key."' > ".$value[0]."</p>";
     $i = $i + 1 ;
   }
   echo "<br>";
   if($value[2]!=null){
-    echo " <p hidden id ='L1".$key."' > ".$value[2]."</p>";
+    echo " <p hidden id ='L1".$key."' > ".$value[1]."</p>";
     $i = $i + 1 ;
   }
   echo "<br>";
   if($value[3]!=null){
-    echo " <p hidden id ='l2".$key."' > ".$value[3]."</p>";
+    echo " <p hidden id ='l2".$key."' > ".$value[2]."</p>";
     $i = $i + 1 ;
   }
   echo "<br>";
   if($value[4]!=null){
-    echo " <p hidden id ='L2".$key."' > ".$value[4]."</p>";
+    echo " <p hidden id ='L2".$key."' > ".$value[3]."</p>";
     $i = $i + 1 ;
   }
   echo "<br>";
   if($value[5]!=null){
-    echo " <p hidden id ='l3".$key."' > ".$value[5]."</p>";
+    echo " <p hidden id ='l3".$key."' > ".$value[4]."</p>";
     $i = $i + 1 ;
   }
   echo "<br>";
   if($value[6]!=null){
-    echo " <p hidden id ='L3".$key."' > ".$value[6]."</p>";
+    echo " <p hidden id ='L3".$key."' > ".$value[5]."</p>";
     $i = $i + 1 ;
   }
   echo "<p hidden id='cantidad".$key."' >".$i."";

@@ -38,6 +38,14 @@ if(!isset($_SESSION['MAIL'])){
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -352,10 +360,26 @@ if(!isset($_SESSION['MAIL'])){
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
+    <?php
+$query = $database->prepare(" select count(*) from temperatura, presion,humedad , tope where temperatura.magnitud < tope.tempmax and temperatura.magnitud > tope.tempmin and humedad.magnitud < tope.humemax and humedad.magnitud > tope.humemin and presion.magnitud < tope.presmax and presion.magnitud > tope.presmin and cliente_id = '".$_SESSION['ID']."'");
+$query->execute();
+$resultado = $query->fetchall();
+
+if($resultado[0][0] > 0 ){
+  ?>
+  <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h4><i class="icon fa fa-ban"></i> Alerta!</h4>
+                Hay un(os) valor(es) fuera del rango establecido, Favor de revisar!
+              </div>
+              <?php
+}
+ ?>
+
     <section class="content-header">
       <h1>
-        Mapa
-        <small>Sector Ejemplo</small>
+        Portada
+        <small>principal</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Portada</a></li>
@@ -363,319 +387,251 @@ if(!isset($_SESSION['MAIL'])){
       </ol>
     </section>
 
-<section>
-  <div class="content-wrapper">
+
+    <script src="dist/js/Chart.min.js"></script>
+    <script src="dist/js/jquery.min.js"></script>
+    <script src="dist/js/lineas.js"></script>
+    <script src="dist/js/pie.js"></script>
+
+
     <!-- Main content -->
-      <br>
-       <div id="mapid" style="width: 700px; height: 500px;">
+    <section class="content">
+      <!-- Small boxes (Stat box) -->
+      <div class="chart-container">
+                <div>
+                  <canvas id="line-chartcanvas"></canvas>
+                </div>
 
-       </div>
-
-              <br><br>
               </div>
-        <div >
-        <center      >
-        <h2>Agregar nuevo sector</h2>
-        <form action="algo.php" method="get">
 
-          <table  id="tabla" border="1">
-            <tr> <td>Latitud</td><td>Longitud</td></tr>
-          </table>
-
-          <input type="hidden" id="cantidad" name="cantidad">
-          <br>
-          <input type="text" name="nombre" placeholder="Pon el nombre del sector"><br>
-          <br>
-          <button onclick="guardar()">generar  </button>
-        </form>
-        </center>
-        </div>
-<?php
-        //////////////////////////////////////////
-include("conexion.php");
-?>
-
-<div class="container">
-    <div class="content">
-    <center
-      <h2>Lista de Sectores</h2>
-      </center>
-      <hr />
-
-      <?php
-      if(isset($_GET['aksi']) == 'delete'){
-        // escaping, additionally removing everything that could be (html/javascript-) code
-        $nik = mysqli_real_escape_string($con,(strip_tags($_GET["nik"],ENT_QUOTES)));
-        $cek = mysqli_query($con, "SELECT * FROM sector3ptos WHERE id='$nik' and Cliente_Rut = '".$_SESSION['RUT']."'");
-        if(mysqli_num_rows($cek) == 0){
-          echo '<div class="alert alert-info alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> No se encontraron datos.</div>';
-        }else{
-          $delete = mysqli_query($con, "SELECT * FROM sector3ptos WHERE id='$nik' and Cliente_Rut = '".$_SESSION['RUT']."'");
-          if($delete){
-            echo '<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> Datos eliminado correctamente.</div>';
-          }else{
-            echo '<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> Error, no se pudo eliminar los datos.</div>';
-          }
-        }
-      }
-      ?>
+      <div class="row">
 
 
-      <br />
-      <div class="table-responsive">
-      <table class="table table-striped table-hover">
-        <tr>
-                    <th>No</th>
-
-          <th>Nombre</th>
-                    <th>Latitud</th>
-                    <th>Longitud</th>
-          <th>Latitud</th>
-                    <th>Longitud</th>
-                    <th>Latitud</th>
-                    <th>Longitud</th>
-                    <th>Eliminar</th>
-        </tr>
         <?php
 
-        $sql = mysqli_query($con, "SELECT * FROM sector3ptos ORDER BY id ASC");
 
-        if(mysqli_num_rows($sql) == 0){
-          echo '<tr><td colspan="8">No hay datos.</td></tr>';
-        }else{
-          $no = 1;
-          while($row = mysqli_fetch_assoc($sql)){
-            echo '
-            <tr>
-              <td>'.$no.'</td>
-              <td>'.$row['nombre'].'</td>
-                            <td>'.$row['latitud1'].'</td>
-                            <td>'.$row['longitud1'].'</td>
-                            <td>'.$row['latitud2'].'</td>
-                            <td>'.$row['longitud2'].'</td>
-                            <td>'.$row['latitud3'].'</td>
-                            <td>'.$row['longitud3'].'</td>'
-              ;
+        $tope = $database->prepare(" select * from tope where  cliente_id = '".$_SESSION['ID']."'");
+        $tope->execute();
+        $topes = $tope->fetchall();
 
-            echo '
-              </td>
-              <td>
+        $var = $database->prepare("SELECT * FROM temperatura Where  cliente_id = '".$_SESSION['ID']."'");
+        $var->execute();
+        $sensores = $var->fetchall();
+        foreach ($sensores as $key => $value) {
 
+            if($value[0] > $topes[0][0] ){
 
-                <a href="setearmapa.php?aksi=delete&nik='.$row['id'].'" title="Eliminar" onclick="return confirm(\'Esta seguro de borrar los datos de '.$row['Nombre'].'?\')" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
-              </td>
-            </tr>
-            ';
-            $no++;
-          }
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-red">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> celcius<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Temperatura</p>
+                    </div>
+
+                    <a href="temperatura.php" class="small-box-footer">sector <?php echo $value[2] ?> <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+
+                </div>
+
+                <?php
+            }
+            if($value[0] < $topes[0][1] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-light-blue">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> celcius<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Tepmeratura</p>
+                    </div>
+
+                    <a href="temperatura.php" class="small-box-footer">sector <?php echo $value[2] ?> <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+            if($value[0] < $tope[0][0] && $value[0] > $value[0][1] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-green">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?>°Celcius<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Temperatura</p>
+                    </div>
+
+                    <a href="temperatura" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+
         }
-        ?>
-      </table>
+
+
+        $var = $database->prepare("SELECT * FROM presion Where  cliente_id = '".$_SESSION['ID']."'");
+        $var->execute();
+        $sensores = $var->fetchall();
+        foreach ($sensores as $key => $value) {
+
+            if($value[0] > $topes[0][2] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-red">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> psi<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Presion</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+            if($value[0] < $topes[0][3] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-light-blue">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> psi<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Presion</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+            if($value[0] > $topes[0][3] && $value[0] < $topes[0][2] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-green">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> psi<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Presion</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+
+          }
+
+        $var = $database->prepare("SELECT * FROM presion Where  cliente_id = '".$_SESSION['ID']."'");
+        $var->execute();
+        $sensores = $var->fetchall();
+        foreach ($sensores as $key => $value) {
+
+            if($value[0] > $topes[0][4] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-red">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> %<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Humedad</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+            if($value[0] < $topes[0][5] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-light-blue">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> %<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Humedad</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+            if($value[0] > $topes[0][5] && $value[0] < $topes[0][4] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-green">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> %<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Humedad</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+
+        }
+
+
+         ?>
+
+                <!-- ./col -->
+
       </div>
-    </div>
-  </div>
 
-<?php
-        /////////////////////////////////////////
-      ?>
+      <section class="content">
+          <!-- BAR CHART -->
+          <div class="box box-success">
+            <div class="box-header with-border">
+              <h3 class="box-title">Consumo del agua</h3>
 
-</section>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
 
+            <div class="box-body">
+            <div>
+                <div >
+                <canvas id="pie-chartcanvas" style="height:230px"></canvas>
+                </div>
 
+          </div>
 
-
-
-
-
-
-
-<?php
-$var = $database->prepare("SELECT * from sector3ptos Where id > 0");
-$var->execute();
-// value 4  limite inferior
-// value 5 limite superior
-$puntos = $var->fetchall();
-$i = 0;
-echo "<p hidden id='total'> ".sizeof($puntos)."</p>";
-foreach ($puntos as $key => $value) {
-  # code...
-
-  if($value[8] != null){
-    echo "<p hidden id='nombre".$key."'> ".$value[8]."</p>";
-  }
-  echo "<br>";
-
-  if($value[1]!=null){
-    echo " <p hidden id ='l1".$key."' > ".$value[1]."</p>";
-    $i = $i + 1 ;
-  }
-  echo "<br>";
-  if($value[2]!=null){
-    echo " <p hidden id ='L1".$key."' > ".$value[2]."</p>";
-    $i = $i + 1 ;
-  }
-  echo "<br>";
-  if($value[3]!=null){
-    echo " <p hidden id ='l2".$key."' > ".$value[3]."</p>";
-    $i = $i + 1 ;
-  }
-  echo "<br>";
-  if($value[4]!=null){
-    echo " <p hidden id ='L2".$key."' > ".$value[4]."</p>";
-    $i = $i + 1 ;
-  }
-  echo "<br>";
-  if($value[5]!=null){
-    echo " <p hidden id ='l3".$key."' > ".$value[5]."</p>";
-    $i = $i + 1 ;
-  }
-  echo "<br>";
-  if($value[6]!=null){
-    echo " <p hidden id ='L3".$key."' > ".$value[6]."</p>";
-    $i = $i + 1 ;
-  }
-  echo "<p hidden id='cantidad".$key."' >".$i."";
-
-}
-
-       ?>
-
-<script>
+        </section>
 
 
-  var mymap = L.map('mapid').setView([-35.4334181, -71.6317734,17], 16);
-
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-      maxZoom: 18,
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-        'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      id: 'mapbox.streets'
-    }).addTo(mymap);
-
-  var total = document.getElementById("total").innerHTML;
-
-for (var i = 0; i < total; i++) {
-  var ia = "l1"+i;
-  var ib = "l2"+i;
-  var ic = "l3"+i;
-  var id = "L1"+i;
-  var iif = "L2"+i;
-  var ig = "L3"+i;
-  var iname = "nombre"+i;
-
-  var l1 = document.getElementById(ia).innerHTML;
-  var l2 = document.getElementById(ib).innerHTML;
-  var l3 = document.getElementById(ic).innerHTML;
-  var L1 = document.getElementById(id).innerHTML;
-  var L2 = document.getElementById(iif).innerHTML;
-  var L3 = document.getElementById(ig).innerHTML;
-  var arr1 = [l1,L1];
-  var arr2 = [l2,L2];
-  var arr3 = [l3,L3];
-  var nombre = document.getElementById(iname).innerHTML;
-
-
-  L.polygon([
-      arr1,arr2,arr3
-  ]).addTo(mymap).bindPopup(nombre);
-
-}
+      <section class="content">
+      <!-- Small boxes (Stat box) -->
+      <div class="row">
 
 
 
-  var cantidad = 0;
-  var popup = L.popup();
 
 
-  function guardar(){
-    for (var i = Things.length - 1; i >= 0; i--) {
-      Things[i]
-    }
-    if (cantidad >= 3){
-      alert("bacan es mas de 3 asi que esta bien :"+cantidad);
-    }else{
-      alert("llego solo hasta el "+
-        cantidad);
-    }
-  }
-
-
-  function results(e){
-
-    var latitud = e.latlng.toString().slice(7,16);
-    var longitud = e.latlng.toString().slice(17,26);
-
-    var table = document.getElementById("tabla");
-
-    var row = table.insertRow(cantidad);
-
-    cantidad = cantidad + 1 ;
-
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-
-    cell1.innerHTML="<input type='text' name=a"+cantidad+" value="+latitud+">";
-    cell2.innerHTML="<input type='text' name=b"+cantidad+" value="+longitud+">";
-
-    document.getElementById("cantidad").value=cantidad;
-
-  }
-  var icono = L.icon({
-    iconUrl: 'hoja.png',
-    shadowUrl: '1601.png',
-
-    iconSize:     [38, 95], // size of thei con
-    shadowSize:   [50, 64], // size of the shadow
-    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
-  });
-  var i  = 0;
-  function onMapClick(e) {
-
-  if(i<7){
-    i = i + 1 ;
-
-    popup
-      .setLatLng(e.latlng)
-      var latitud = e.latlng.toString().slice(7,16);
-      var longitud = e.latlng.toString().slice(17,26);
-
-      L.marker([latitud, longitud], {icon: icono}).addTo(mymap);
-
-      results(e);
-      }else{
-        alert("No pueden ser más de siete puntos!");
-      }
-
-  }
-
-  mymap.on('click', onMapClick);
-
-</script>
+       </div>
+      <!-- /.row -->
+      </section>
       <!-- Main row -->
       <div class="row">
         <!-- Left col -->
         <section class="col-lg-7 connectedSortable">
-          <!-- Custom tabs (Charts with tabs)-->
-
-          <!-- /.nav-tabs-custom -->
-
-          <!-- Chat box -->
-
-          <!-- /.box (chat box) -->
-
-          <!-- TO DO List -->
-
-
-          <!-- quick email widget -->
-
-          <!-- solid sales graph -->
-
-          <!-- Calendar -->
-
-          <!-- /.box -->
 
         </section>
         <!-- right col -->

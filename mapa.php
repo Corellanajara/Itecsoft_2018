@@ -1,9 +1,9 @@
 <?php session_start();
 if(!isset($_SESSION['MAIL'])){
-  header("Location :pages/examples/login.html");
+  header("Location: login.html");
   exit;
 }
-
+  error_reporting(E_ALL);
  ?>
 <!DOCTYPE html>
 <html>
@@ -13,7 +13,7 @@ if(!isset($_SESSION['MAIL'])){
   <?php
     include("database.php");
      ?>
-  <title>ItecSoft | Mapa</title>
+  <title>ItecSoft |Portada</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -38,17 +38,6 @@ if(!isset($_SESSION['MAIL'])){
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
-
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
-
-  <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -169,15 +158,16 @@ if(!isset($_SESSION['MAIL'])){
           </li>
           <!-- Notifications: style can be found in dropdown.less -->
           <?php
-              $alertas = $database->prepare("Select count(*) from Alerta where Cliente_Rut = '".$_SESSION['RUT']."' and Visto = 0");
+              $alertas = $database->prepare("Select count(*) from alerta where cliente_id = '".$_SESSION['ID']."' and visto = 0");
               $alertas->execute();
               $cant = $alertas->fetchall();
               $cantidad = $cant[0][0];
-              $alertas = $database->prepare("Select Descripcion,Visto  from Alerta where Cliente_Rut = '".$_SESSION['RUT']."'");
+              $alertas = $database->prepare("Select texto,visto  from alerta where cliente_id = '".$_SESSION['ID']."'");
               $alertas->execute();
               $cant = $alertas->fetchall();
 
          ?>
+
 
 
 
@@ -201,7 +191,7 @@ if(!isset($_SESSION['MAIL'])){
 
                     foreach ($cant as $key => $value) {
                       # code...
-                      if($value[1]==0){
+                      if($value[3]==0){
                         ?>
                        <li>
                               <a data-toggle='modal' data-target='#modal-danger' <?php echo   "onclick = 'cambiar(".$key.")'" ?> >
@@ -209,7 +199,7 @@ if(!isset($_SESSION['MAIL'])){
                               <?php    echo $value[0];?>
                                   </a>
 
-                              </li>"
+                              </li>
 
                               <?php
                       }
@@ -306,12 +296,12 @@ if(!isset($_SESSION['MAIL'])){
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Portada Simple</a></li>
-            <li><a href="index.php"><i class="fa fa-circle-o"></i> Portada Avanzada</a></li>
+
+            <li><a href="index.php"><i class="fa fa-circle-o"></i> Portada</a></li>
           </ul>
         </li>
         <li>
-          <a href="mapa.php">
+          <a href="mostrarmapa.php">
             <i class="fa fa-map-o"></i> <span>Mapa</span>
           </a>
 
@@ -321,14 +311,15 @@ if(!isset($_SESSION['MAIL'])){
             <i class="fa fa-gears"></i>
             <span>Opciones</span>
             <span class="pull-right-container">
-              no disponible aun
+              no completo aún
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="pages/layout/top-nav.html"><i class="fa fa-circle-o"></i> Top Navigation</a></li>
-            <li><a href="pages/layout/boxed.html"><i class="fa fa-circle-o"></i> Boxed</a></li>
-            <li><a href="pages/layout/fixed.html"><i class="fa fa-circle-o"></i> Fixed</a></li>
-            <li><a href="pages/layout/collapsed-sidebar.html"><i class="fa fa-circle-o"></i> Collapsed Sidebar</a></li>
+            <li><a href="configuracion.php"><i class="fa fa-circle-o"></i> Activar o desactivar</a></li>
+            <li><a href="sliders.php"><i class="fa fa-circle-o"></i> Limites</a></li>
+            <li><a href="setearmapa.php"><i class="fa fa-circle-o"></i> Configurar mapa</a></li>
+            <li><a href="pages/layout/fixed.html"><i class="fa fa-circle-o"></i> Config usuario</a></li>
+
           </ul>
         </li>
         <li>
@@ -360,11 +351,28 @@ if(!isset($_SESSION['MAIL'])){
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
+
     <!-- Content Header (Page header) -->
+    <?php
+$query = $database->prepare("select count(*) from temperatura, presion,humedad , tope where temperatura.magnitud > tope.tempmax and temperatura.magnitud < tope.tempmin and humedad.magnitud > tope.humemax and humedad.magnitud < tope.humemin and presion.magnitud > tope.presmax and presion.magnitud < tope.presmin and tope.cliente_id = '".$_SESSION['ID']."'");
+$query->execute();
+$resultado = $query->fetchall();
+
+if($resultado[0][0] > 0 ){
+  ?>
+  <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h4><i class="icon fa fa-ban"></i> Alerta!</h4>
+                Hay un(os) valor(es) fuera del rango establecido, Favor de revisar!
+              </div>
+              <?php
+}
+ ?>
+
     <section class="content-header">
       <h1>
-        Mapa
-        <small>Sector Ejemplo</small>
+        Portada
+        <small>principal</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Portada</a></li>
@@ -372,117 +380,253 @@ if(!isset($_SESSION['MAIL'])){
       </ol>
     </section>
 
-<section>
-  <div class="content-wrapper">
+
+    <script src="dist/js/Chart.min.js"></script>
+    <script src="dist/js/jquery.min.js"></script>
+    <script src="dist/js/lineas.js"></script>
+    <script src="dist/js/pie.js"></script>
+
+
     <!-- Main content -->
-       <div id="mapid" style="width: 600px; height: 400px;"></div>
-              <br><br>
+    <section class="content">
+      <!-- Small boxes (Stat box) -->
+      <div class="chart-container">
+                <div>
+                  <canvas id="line-chartcanvas"></canvas>
+                </div>
+
               </div>
-              <div id="mensaje"></div>
 
-</section>
-
-<?php
-$var = $database->prepare("SELECT * FROM Sensor Where activo = 1");
-$var->execute();
-// value 4  limite inferior
-// value 5 limite superior
-$sensores = $var->fetchall();
-foreach ($sensores as $key => $value) {
-  # code...
-
-  if($value[1] == "Temperatura"){
-    echo "<p id='temperatura'> ". $value[2] ." </p> ";
-  }
-  if($value[1] == "Humedad"){
-    echo "<p id='humedad'> ". $value[2] ." </p> ";
-  }
-  if($value[1] == "Presion"){
-    echo "<p id='presion'> ". $value[2] ." </p> ";
-  }
-
-}
-
-       ?>
-<script>
-  document.getElementById("temperatura").style.visibility = "hidden";
-  document.getElementById("humedad").style.visibility = "hidden";
-  document.getElementById("presion").style.visibility = "hidden";
-
-  var temp = document.getElementById("temperatura").innerHTML;
-  var hum = document.getElementById("humedad").innerHTML;
-  var pres = document.getElementById("presion").innerHTML;
-
-  var mensaje = "<b>Sector 1 </b></br>Temperatura = " + temp + " <br>"+
-  "Humedad = " + hum + " <br>" +
-  "Presion = " + pres;
-  var mensaje2 = "<b>Sector 2 </b></br>Temperatura = " + temp + " <br>"+
-  "Humedad = " + hum + " <br>" +
-  "Presion = " + pres;
-
-  var mymap = L.map('mapid').setView([-35.4334181, -71.6317734,17], 16);
-
-  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-    maxZoom: 18,
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-      '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-      'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    id: 'mapbox.streets'
-  }).addTo(mymap);
-
-  L.marker([-35.43555, -71.6346]).addTo(mymap)
-    .bindPopup("<b>Aca sucede algo!</b><br />Mensaje de ejemplo.").openPopup();
-
-  L.circle([-35.43555, -71.6316], 200, {
-    color: 'red',
-    fillColor: '#f03',
-    fillOpacity: 0.5
-  }).addTo(mymap).bindPopup(mensaje);
-
-  L.polygon([
-    [-35.43341, -71.63279],
-    [-35.43355, -71.63184],
-    [-35.43306, -71.6316]
-  ]).addTo(mymap).bindPopup(mensaje2);
+      <div class="row">
 
 
-  var popup = L.popup();
-  function results(e){
-    var latitud = e.latlng.toString().slice(7,16);
-    var longitud = e.latlng.toString().slice(17,26);
-  document.getElementById('mensaje').innerHTML='<p id="latlng">Datos sobre ese sector: <br> Latitud :'+latitud+' <br>Longitud : '+longitud+'</p>';
-  }
+        <?php
 
-  function onMapClick(e) {
-      results(e);
-  }
 
-  mymap.on('click', onMapClick);
-  mymap.on('click', results);
+        $tope = $database->prepare(" select * from tope where  cliente_id = '".$_SESSION['ID']."'");
+        $tope->execute();
+        $topes = $tope->fetchall();
 
-</script>
+        $var = $database->prepare("SELECT * FROM temperatura Where  cliente_id = '".$_SESSION['ID']."'");
+        $var->execute();
+        $sensores = $var->fetchall();
+        foreach ($sensores as $key => $value) {
+
+            if($value[0] > $topes[0][0] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-red">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> celcius<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Temperatura</p>
+                    </div>
+
+                    <a href="temperatura.php" class="small-box-footer">sector <?php echo $value[2] ?> <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+
+                </div>
+
+                <?php
+            }
+
+            if($value[0] < $topes[0][1] ){
+
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-light-blue">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> celcius<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Tepmeratura</p>
+                    </div>
+
+                    <a href="temperatura.php" class="small-box-footer">sector <?php echo $value[2] ?> <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+
+            if($value[0] < $topes[0][0] && $value[0] > $topes[0][1] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-green">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?>°Celcius<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Temperatura</p>
+                    </div>
+
+                    <a href="temperatura" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+
+        }
+
+
+        $var = $database->prepare("SELECT * FROM presion Where  cliente_id = '".$_SESSION['ID']."'");
+        $var->execute();
+        $sensores = $var->fetchall();
+        foreach ($sensores as $key => $value) {
+
+            if($value[0] > $topes[0][2] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-red">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> psi<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Presion</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+            if($value[0] < $topes[0][3] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-light-blue">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> psi<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Presion</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+            if($value[0] > $topes[0][3] && $value[0] < $topes[0][2] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-green">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> psi<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Presion</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+
+          }
+
+        $var = $database->prepare("SELECT * FROM presion Where  cliente_id = '".$_SESSION['ID']."'");
+        $var->execute();
+        $sensores = $var->fetchall();
+        foreach ($sensores as $key => $value) {
+
+            if($value[0] > $topes[0][4] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-red">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> %<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Humedad</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+            if($value[0] < $topes[0][5] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-light-blue">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> %<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Humedad</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+            if($value[0] > $topes[0][5] && $value[0] < $topes[0][4] ){
+              ?>
+              <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-green">
+                    <div class="inner">
+                      <h3><?php echo $value[0] ?> %<sup style="font-size: 20px"></sup></h3>
+
+                      <p>Humedad</p>
+                    </div>
+
+                    <a href="#" class="small-box-footer">Más info <i class="fa fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <?php
+            }
+
+        }
+
+
+         ?>
+
+                <!-- ./col -->
+
+      </div>
+
+      <section class="content">
+          <!-- BAR CHART -->
+          <div class="box box-success">
+            <div class="box-header with-border">
+              <h3 class="box-title">Consumo del agua</h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+
+            <div class="box-body">
+            <div>
+                <div >
+                <canvas id="pie-chartcanvas" style="height:230px"></canvas>
+                </div>
+
+          </div>
+
+        </section>
+
+
+      <section class="content">
+      <!-- Small boxes (Stat box) -->
+      <div class="row">
+
+
+
+
+
+       </div>
+      <!-- /.row -->
+      </section>
       <!-- Main row -->
       <div class="row">
         <!-- Left col -->
         <section class="col-lg-7 connectedSortable">
-          <!-- Custom tabs (Charts with tabs)-->
-
-          <!-- /.nav-tabs-custom -->
-
-          <!-- Chat box -->
-
-          <!-- /.box (chat box) -->
-
-          <!-- TO DO List -->
-
-
-          <!-- quick email widget -->
-
-          <!-- solid sales graph -->
-
-          <!-- Calendar -->
-
-          <!-- /.box -->
 
         </section>
         <!-- right col -->

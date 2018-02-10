@@ -1,9 +1,9 @@
 <?php session_start();
 if(!isset($_SESSION['MAIL'])){
-  header("Location :pages/examples/login.html");
+  header("Location: login.html");
   exit;
 }
-
+  error_reporting(E_ALL);
  ?>
 <!DOCTYPE html>
 <html>
@@ -13,7 +13,7 @@ if(!isset($_SESSION['MAIL'])){
   <?php
     include("database.php");
      ?>
-  <title>ItecSoft | Mapa</title>
+  <title>ItecSoft |Portada</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -37,18 +37,8 @@ if(!isset($_SESSION['MAIL'])){
   <link rel="stylesheet" href="bower_components/bootstrap-daterangepicker/daterangepicker.css">
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
-
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
-
-  <!-- Google Font -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -169,15 +159,16 @@ if(!isset($_SESSION['MAIL'])){
           </li>
           <!-- Notifications: style can be found in dropdown.less -->
           <?php
-              $alertas = $database->prepare("Select count(*) from Alerta where Cliente_Rut = '".$_SESSION['RUT']."' and Visto = 0");
+              $alertas = $database->prepare("Select count(*) from alerta where cliente_id = '".$_SESSION['ID']."' and visto = 0");
               $alertas->execute();
               $cant = $alertas->fetchall();
               $cantidad = $cant[0][0];
-              $alertas = $database->prepare("Select Descripcion,Visto  from Alerta where Cliente_Rut = '".$_SESSION['RUT']."'");
+              $alertas = $database->prepare("Select texto,visto  from alerta where cliente_id = '".$_SESSION['ID']."'");
               $alertas->execute();
               $cant = $alertas->fetchall();
 
          ?>
+
 
 
 
@@ -201,7 +192,7 @@ if(!isset($_SESSION['MAIL'])){
 
                     foreach ($cant as $key => $value) {
                       # code...
-                      if($value[1]==0){
+                      if($value[3]==0){
                         ?>
                        <li>
                               <a data-toggle='modal' data-target='#modal-danger' <?php echo   "onclick = 'cambiar(".$key.")'" ?> >
@@ -209,7 +200,7 @@ if(!isset($_SESSION['MAIL'])){
                               <?php    echo $value[0];?>
                                   </a>
 
-                              </li>"
+                              </li>
 
                               <?php
                       }
@@ -307,11 +298,11 @@ if(!isset($_SESSION['MAIL'])){
           </a>
           <ul class="treeview-menu">
 
-            <li><a href="index.php"><i class="fa fa-circle-o"></i> Portada </a></li>
+            <li><a href="index.php"><i class="fa fa-circle-o"></i> Portada</a></li>
           </ul>
         </li>
         <li>
-          <a href="mapa.php">
+          <a href="mostrarmapa.php">
             <i class="fa fa-map-o"></i> <span>Mapa</span>
           </a>
 
@@ -321,7 +312,7 @@ if(!isset($_SESSION['MAIL'])){
             <i class="fa fa-gears"></i>
             <span>Opciones</span>
             <span class="pull-right-container">
-              no disponible aun
+              no completo aún
             </span>
           </a>
           <ul class="treeview-menu">
@@ -329,6 +320,7 @@ if(!isset($_SESSION['MAIL'])){
             <li><a href="sliders.php"><i class="fa fa-circle-o"></i> Limites</a></li>
             <li><a href="setearmapa.php"><i class="fa fa-circle-o"></i> Configurar mapa</a></li>
             <li><a href="pages/layout/fixed.html"><i class="fa fa-circle-o"></i> Config usuario</a></li>
+
           </ul>
         </li>
         <li>
@@ -415,11 +407,11 @@ include("conexion.php");
       if(isset($_GET['aksi']) == 'delete'){
         // escaping, additionally removing everything that could be (html/javascript-) code
         $nik = mysqli_real_escape_string($con,(strip_tags($_GET["nik"],ENT_QUOTES)));
-        $cek = mysqli_query($con, "SELECT * FROM sector3ptos WHERE id='$nik' and Cliente_Rut = '".$_SESSION['RUT']."'");
+        $cek = mysqli_query($con, "SELECT * FROM sector3ptos WHERE id='$nik' and cliente_id = '".$_SESSION['ID']."'");
         if(mysqli_num_rows($cek) == 0){
           echo '<div class="alert alert-info alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> No se encontraron datos.</div>';
         }else{
-          $delete = mysqli_query($con, "SELECT * FROM sector3ptos WHERE id='$nik' and Cliente_Rut = '".$_SESSION['RUT']."'");
+          $delete = mysqli_query($con, "SELECT * FROM sector3ptos WHERE id='$nik' and cliente_id = '".$_SESSION['ID ']."'");
           if($delete){
             echo '<div class="alert alert-success alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> Datos eliminado correctamente.</div>';
           }else{
@@ -504,43 +496,44 @@ $var->execute();
 // value 4  limite inferior
 // value 5 limite superior
 $puntos = $var->fetchall();
+
 $i = 0;
 echo "<p hidden id='total'> ".sizeof($puntos)."</p>";
 foreach ($puntos as $key => $value) {
   # code...
 
-  if($value[8] != null){
-    echo "<p hidden id='nombre".$key."'> ".$value[8]."</p>";
+  if($value[6] != null){
+    echo "<p hidden id='nombre".$key."'> ".$value[6]."</p>";
   }
   echo "<br>";
 
   if($value[1]!=null){
-    echo " <p hidden id ='l1".$key."' > ".$value[1]."</p>";
+    echo " <p hidden id ='l1".$key."' > ".$value[0]."</p>";
     $i = $i + 1 ;
   }
   echo "<br>";
   if($value[2]!=null){
-    echo " <p hidden id ='L1".$key."' > ".$value[2]."</p>";
+    echo " <p hidden id ='L1".$key."' > ".$value[1]."</p>";
     $i = $i + 1 ;
   }
   echo "<br>";
   if($value[3]!=null){
-    echo " <p hidden id ='l2".$key."' > ".$value[3]."</p>";
+    echo " <p hidden id ='l2".$key."' > ".$value[2]."</p>";
     $i = $i + 1 ;
   }
   echo "<br>";
   if($value[4]!=null){
-    echo " <p hidden id ='L2".$key."' > ".$value[4]."</p>";
+    echo " <p hidden id ='L2".$key."' > ".$value[3]."</p>";
+    $i = $i + 1 ;
+  }
+  echo "<br>";
+  if($value[4]!=null){
+    echo " <p hidden id ='l3".$key."' > ".$value[4]."</p>";
     $i = $i + 1 ;
   }
   echo "<br>";
   if($value[5]!=null){
-    echo " <p hidden id ='l3".$key."' > ".$value[5]."</p>";
-    $i = $i + 1 ;
-  }
-  echo "<br>";
-  if($value[6]!=null){
-    echo " <p hidden id ='L3".$key."' > ".$value[6]."</p>";
+    echo " <p hidden id ='L3".$key."' > ".$value[5]."</p>";
     $i = $i + 1 ;
   }
   echo "<p hidden id='cantidad".$key."' >".$i."";
@@ -551,352 +544,120 @@ foreach ($puntos as $key => $value) {
 
 <script>
 
+    var mymap = L.map('mapid').setView([-35.4334181, -71.6317734,17], 16);
 
-  var mymap = L.map('mapid').setView([-35.4334181, -71.6317734,17], 16);
+      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+          '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+          'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        id: 'mapbox.streets'
+      }).addTo(mymap);
 
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-      maxZoom: 18,
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-        'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      id: 'mapbox.streets'
-    }).addTo(mymap);
+    var total = document.getElementById("total").innerHTML;
 
-  var total = document.getElementById("total").innerHTML;
+    for (var i = 0; i < total; i++) {
+      var ia = "l1"+i;
+      var ib = "l2"+i;
+      var ic = "l3"+i;
+      var id = "L1"+i;
+      var iif = "L2"+i;
+      var ig = "L3"+i;
+      var iname = "nombre"+i;
 
-for (var i = 0; i < total; i++) {
-  var ia = "l1"+i;
-  var ib = "l2"+i;
-  var ic = "l3"+i;
-  var id = "L1"+i;
-  var iif = "L2"+i;
-  var ig = "L3"+i;
-  var iname = "nombre"+i;
+      var l1 = document.getElementById(ia).innerHTML;
+      var l2 = document.getElementById(ib).innerHTML;
+      var l3 = document.getElementById(ic).innerHTML;
+      var L1 = document.getElementById(id).innerHTML;
+      var L2 = document.getElementById(iif).innerHTML;
+      var L3 = document.getElementById(ig).innerHTML;
+      var arr1 = [l1,L1];
+      var arr2 = [l2,L2];
+      var arr3 = [l3,L3];
+      var nombre = document.getElementById(iname).innerHTML;
 
-  var l1 = document.getElementById(ia).innerHTML;
-  var l2 = document.getElementById(ib).innerHTML;
-  var l3 = document.getElementById(ic).innerHTML;
-  var L1 = document.getElementById(id).innerHTML;
-  var L2 = document.getElementById(iif).innerHTML;
-  var L3 = document.getElementById(ig).innerHTML;
-  var arr1 = [l1,L1];
-  var arr2 = [l2,L2];
-  var arr3 = [l3,L3];
-  var nombre = document.getElementById(iname).innerHTML;
+      console.log(arr1);
+      console.log(arr2);
+      console.log(arr3);
+      L.polygon([
+          arr1,arr2,arr3
+      ]).addTo(mymap).bindPopup(nombre);
 
-
-  L.polygon([
-      arr1,arr2,arr3
-  ]).addTo(mymap).bindPopup(nombre);
-
-}
-
-
-
-  var cantidad = 0;
-  var popup = L.popup();
-
-
-  function guardar(){
-    for (var i = Things.length - 1; i >= 0; i--) {
-      Things[i]
     }
-    if (cantidad >= 3){
-      alert("bacan es mas de 3 asi que esta bien :"+cantidad);
-    }else{
-      alert("llego solo hasta el "+
-        cantidad);
+
+
+
+    var cantidad = 0;
+    var popup = L.popup();
+
+
+    function guardar(){
+      for (var i = Things.length - 1; i >= 0; i--) {
+        Things[i]
+      }
+      if (cantidad >= 3){
+        alert("bacan es mas de 3 asi que esta bien :"+cantidad);
+      }else{
+        alert("llego solo hasta el "+
+          cantidad);
+      }
     }
-  }
 
 
-  function results(e){
+    function results(e){
 
-    var latitud = e.latlng.toString().slice(7,16);
-    var longitud = e.latlng.toString().slice(17,26);
-
-    var table = document.getElementById("tabla");
-
-    var row = table.insertRow(cantidad);
-
-    cantidad = cantidad + 1 ;
-
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-
-    cell1.innerHTML="<input type='text' name=a"+cantidad+" value="+latitud+">";
-    cell2.innerHTML="<input type='text' name=b"+cantidad+" value="+longitud+">";
-
-    document.getElementById("cantidad").value=cantidad;
-
-  }
-  var icono = L.icon({
-    iconUrl: 'hoja.png',
-    shadowUrl: '1601.png',
-
-    iconSize:     [38, 95], // size of thei con
-    shadowSize:   [50, 64], // size of the shadow
-    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
-  });
-  var i  = 0;
-  function onMapClick(e) {
-
-  if(i<7){
-    i = i + 1 ;
-
-    popup
-      .setLatLng(e.latlng)
       var latitud = e.latlng.toString().slice(7,16);
       var longitud = e.latlng.toString().slice(17,26);
 
-      L.marker([latitud, longitud], {icon: icono}).addTo(mymap);
+      var table = document.getElementById("tabla");
 
-      results(e);
-      }else{
-        alert("No pueden ser más de siete puntos!");
-      }
+      var row = table.insertRow(cantidad);
 
-  }
+      cantidad = cantidad + 1 ;
 
-  mymap.on('click', onMapClick);
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
 
-</script>
-      <!-- Main row -->
-      <div class="row">
-        <!-- Left col -->
-        <section class="col-lg-7 connectedSortable">
-          <!-- Custom tabs (Charts with tabs)-->
+      cell1.innerHTML="<input type='text' name=a"+cantidad+" value="+latitud+">";
+      cell2.innerHTML="<input type='text' name=b"+cantidad+" value="+longitud+">";
 
-          <!-- /.nav-tabs-custom -->
+      document.getElementById("cantidad").value=cantidad;
 
-          <!-- Chat box -->
+    }
+    var icono = L.icon({
+      iconUrl: 'hoja.png',
+      shadowUrl: '1601.png',
 
-          <!-- /.box (chat box) -->
+      iconSize:     [38, 95], // size of thei con
+      shadowSize:   [50, 64], // size of the shadow
+      iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+      shadowAnchor: [4, 62],  // the same for the shadow
+      popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+    });
+    var i  = 0;
+    function onMapClick(e) {
 
-          <!-- TO DO List -->
+    if(i<7){
+      i = i + 1 ;
+
+      popup
+        .setLatLng(e.latlng)
+        var latitud = e.latlng.toString().slice(7,16);
+        var longitud = e.latlng.toString().slice(17,26);
+
+        L.marker([latitud, longitud], {icon: icono}).addTo(mymap);
+
+        results(e);
+        }else{
+          alert("No pueden ser más de siete puntos!");
+        }
+
+    }
+
+    mymap.on('click', onMapClick);
 
 
-          <!-- quick email widget -->
-
-          <!-- solid sales graph -->
-
-          <!-- Calendar -->
-
-          <!-- /.box -->
-
-        </section>
-        <!-- right col -->
-      </div>
-      <!-- /.row (main row) -->
-
-    </section>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
-  <footer class="main-footer">
-    <div class="pull-right hidden-xs">
-      <b>Version</b> 0.4.0
-    </div>
-    <strong>Copyright &copy; 2017 <b>Cristopher Orellana</b>.</strong> All rights
-    reserved.
-  </footer>
-
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Create the tabs -->
-    <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
-      <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
-      <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
-    </ul>
-    <!-- Tab panes -->
-    <div class="tab-content">
-      <!-- Home tab content -->
-      <div class="tab-pane" id="control-sidebar-home-tab">
-        <h3 class="control-sidebar-heading">Recent Activity</h3>
-        <ul class="control-sidebar-menu">
-          <li>
-            <a href="javascript:void(0)">
-              <i class="menu-icon fa fa-birthday-cake bg-red"></i>
-
-              <div class="menu-info">
-                <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
-
-                <p>Will be 23 on April 24th</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="javascript:void(0)">
-              <i class="menu-icon fa fa-user bg-yellow"></i>
-
-              <div class="menu-info">
-                <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
-
-                <p>New phone +1(800)555-1234</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="javascript:void(0)">
-              <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
-
-              <div class="menu-info">
-                <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
-
-                <p>nora@example.com</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="javascript:void(0)">
-              <i class="menu-icon fa fa-file-code-o bg-green"></i>
-
-              <div class="menu-info">
-                <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
-
-                <p>Execution time 5 seconds</p>
-              </div>
-            </a>
-          </li>
-        </ul>
-        <!-- /.control-sidebar-menu -->
-
-        <h3 class="control-sidebar-heading">Tasks Progress</h3>
-        <ul class="control-sidebar-menu">
-          <li>
-            <a href="javascript:void(0)">
-              <h4 class="control-sidebar-subheading">
-                Custom Template Design
-                <span class="label label-danger pull-right">70%</span>
-              </h4>
-
-              <div class="progress progress-xxs">
-                <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="javascript:void(0)">
-              <h4 class="control-sidebar-subheading">
-                Update Resume
-                <span class="label label-success pull-right">95%</span>
-              </h4>
-
-              <div class="progress progress-xxs">
-                <div class="progress-bar progress-bar-success" style="width: 95%"></div>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="javascript:void(0)">
-              <h4 class="control-sidebar-subheading">
-                Laravel Integration
-                <span class="label label-warning pull-right">50%</span>
-              </h4>
-
-              <div class="progress progress-xxs">
-                <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="javascript:void(0)">
-              <h4 class="control-sidebar-subheading">
-                Back End Framework
-                <span class="label label-primary pull-right">68%</span>
-              </h4>
-
-              <div class="progress progress-xxs">
-                <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
-              </div>
-            </a>
-          </li>
-        </ul>
-        <!-- /.control-sidebar-menu -->
-
-      </div>
-      <!-- /.tab-pane -->
-      <!-- Stats tab content -->
-      <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>
-      <!-- /.tab-pane -->
-      <!-- Settings tab content -->
-      <div class="tab-pane" id="control-sidebar-settings-tab">
-        <form method="post">
-          <h3 class="control-sidebar-heading">General Settings</h3>
-
-          <div class="form-group">
-            <label class="control-sidebar-subheading">
-              Report panel usage
-              <input type="checkbox" class="pull-right" checked>
-            </label>
-
-            <p>
-              Some information about this general settings option
-            </p>
-          </div>
-          <!-- /.form-group -->
-
-          <div class="form-group">
-            <label class="control-sidebar-subheading">
-              Allow mail redirect
-              <input type="checkbox" class="pull-right" checked>
-            </label>
-
-            <p>
-              Other sets of options are available
-            </p>
-          </div>
-          <!-- /.form-group -->
-
-          <div class="form-group">
-            <label class="control-sidebar-subheading">
-              Expose author name in posts
-              <input type="checkbox" class="pull-right" checked>
-            </label>
-
-            <p>
-              Allow the user to show his name in blog posts
-            </p>
-          </div>
-          <!-- /.form-group -->
-
-          <h3 class="control-sidebar-heading">Chat Settings</h3>
-
-          <div class="form-group">
-            <label class="control-sidebar-subheading">
-              Show me as online
-              <input type="checkbox" class="pull-right" checked>
-            </label>
-          </div>
-          <!-- /.form-group -->
-
-          <div class="form-group">
-            <label class="control-sidebar-subheading">
-              Turn off notifications
-              <input type="checkbox" class="pull-right">
-            </label>
-          </div>
-          <!-- /.form-group -->
-
-          <div class="form-group">
-            <label class="control-sidebar-subheading">
-              Delete chat history
-              <a href="javascript:void(0)" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
-            </label>
-          </div>
-          <!-- /.form-group -->
-        </form>
-      </div>
-      <!-- /.tab-pane -->
-    </div>
-  </aside>
-  <!-- /.control-sidebar -->
-  <!-- Add the sidebar's background. This div must be placed
-       immediately after the control sidebar -->
-  <div class="control-sidebar-bg"></div>
-</div>
+  </script>
 <!-- ./wrapper -->
 
 <!-- jQuery 3 -->
