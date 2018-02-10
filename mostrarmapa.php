@@ -312,7 +312,7 @@ if(!isset($_SESSION['MAIL'])){
           </ul>
         </li>
         <li>
-          <a href="mapa.php">
+          <a href="mostrarmapa.php">
             <i class="fa fa-map-o"></i> <span>Mapa</span>
           </a>
 

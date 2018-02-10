@@ -7,7 +7,7 @@ $(document).ready(function() {
 		url : "http://localhost/Itecsoft_2018/activos.php",
 		type : "GET",
 		success : function(data){
-			console.log(data);
+			console.log(data.length);
 
 			var sensor = {
 				Humedad : [],
@@ -17,23 +17,24 @@ $(document).ready(function() {
 
 			var len = data.length;
 			var dias=0;
-
+			console.log(data);
 			for (var i = 0; i < len; i++) {
-				if (data[i].Nombre == "Presion") {
-					sensor.Temperatura.push(data[i].Magnitud);
+				if (data[i].nombre == "temperatura") {
+					sensor.Temperatura.push(data[i].magnitud);
+					console.log(sensor.Temperatura);
 
 				}
-				else if (data[i].Nombre == "Humedad") {
-					sensor.Presion.push(data[i].Magnitud);
+				else if (data[i].nombre == "presion") {
+					sensor.Presion.push(data[i].magnitud);
 
 				}
-				else if(data[i].Nombre == "Temperatura"){
-					sensor.Humedad.push(data[i].Magnitud);
+				else if(data[i].nombre == "humedad"){
+					sensor.Humedad.push(data[i].magnitud);
 					dias=dias+1;
 				}
 
 			}
-
+			console.log("sensor",sensor);
 
 			var fechas = [];
 			for (var i =1; i <= dias; i++) {
