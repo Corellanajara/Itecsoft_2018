@@ -469,7 +469,7 @@ if($resultado[0][0] > 0 ){
         }
 
 
-        $var = $database->prepare("SELECT * FROM presion Where  cliente_id = '".$_SESSION['ID']."' limit 1");
+        $var = $database->prepare("SELECT * FROM presion Where  cliente_id = '".$_SESSION['ID']."' order by id desc limit 1");
         $var->execute();
         $sensores = $var->fetchall();
         foreach ($sensores as $key => $value) {
@@ -507,6 +507,7 @@ if($resultado[0][0] > 0 ){
                 <?php
             }
             if($value[0] > $topes[0][3] && $value[0] < $topes[0][2] ){
+
               ?>
               <div class="col-lg-3 col-xs-6">
                   <!-- small box -->
@@ -525,7 +526,7 @@ if($resultado[0][0] > 0 ){
 
           }
 
-        $var = $database->prepare("SELECT * FROM presion Where  cliente_id = '".$_SESSION['ID']."' limit 1");
+        $var = $database->prepare("SELECT * FROM presion Where  cliente_id = '".$_SESSION['ID']."'  order by id desc limit 1");
         $var->execute();
         $sensores = $var->fetchall();
         foreach ($sensores as $key => $value) {
