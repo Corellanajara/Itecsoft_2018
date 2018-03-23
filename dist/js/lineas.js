@@ -4,7 +4,7 @@ $(document).ready(function() {
 	var ctx = $("#line-chartcanvas");
 
 	$.ajax({
-		url : "http://localhost/Itecsoft_2018/activos.php",
+		url : "http://188.166.93.45/Itecsoft_2018/activos.php",
 		type : "GET",
 		success : function(data){
 			console.log(data.length);
